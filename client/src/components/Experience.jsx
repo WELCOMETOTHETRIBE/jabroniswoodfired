@@ -22,24 +22,24 @@ function useReveal(ref) {
 
 const cast = [
   {
-    role: 'Cocktail Maestro',
-    description: 'Builds your drink tableside like he owes you a favor. He doesn\'t rush. Neither do you.',
+    role: 'The Femme Fatale',
+    description: 'She arrives before the fire does. By the end of the night, your guests won\'t remember what they ate — only her. That\'s the point.',
   },
   {
-    role: 'Card Sharp',
-    description: 'Charming. Suspicious. Never quite where you expect him. He moves through the crowd with a reason you\'ll figure out later.',
+    role: 'The Consigliere',
+    description: 'Every table gets a visit. Every glass stays full. He knows your name before you introduce yourself, and he never explains how.',
   },
   {
-    role: 'Flame Thrower',
-    description: 'Opens the night the way fire always should: without warning. The room knows it\'s started.',
+    role: 'The Pit Boss',
+    description: 'Commands the fire like a negotiation he\'s already won. The smoke doesn\'t follow the wind. It follows him.',
   },
   {
-    role: 'Burlesque Performer',
-    description: 'Commands the room between courses. Not a stage — the room. Your guests are the audience, the backdrop, and occasionally the act.',
+    role: 'The Racketeer',
+    description: 'Works the room like it owes him something. Cards, sleight of hand, conversation — never caught, and your guests will love him for it.',
   },
   {
-    role: 'The Comedian',
-    description: 'Never takes the mic. Takes the table next to yours. You\'ll hear him before you see him.',
+    role: 'The Chanteuse',
+    description: 'No mic. No stage. Just a voice that stops the room mid-sentence and makes everyone feel like the evening was written for them personally.',
   },
 ]
 
@@ -147,8 +147,8 @@ export default function Experience() {
         }}>
           {[
             'From the moment the fire is lit, the cast is working.',
-            'Between courses, a burlesque performer commands the room. Not a stage. The room. Your guests are the audience, the backdrop, and occasionally the act.',
-            'The comedian never takes the mic. He takes the table next to yours.',
+            'Between courses, the Femme Fatale owns the room. Not a stage — the room. Your guests are the audience, the backdrop, and occasionally the act.',
+            'The Racketeer never announces himself. He takes the table next to yours.',
             'Every element is choreographed to the meal. As the oven peaks, the room peaks with it. Course by course, act by act — until the final cut of meat hits the board and the whole thing lands exactly where it was always going.',
             'You will not find this anywhere else in Southern California.',
           ].map((para, i) => (

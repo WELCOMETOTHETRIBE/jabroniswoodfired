@@ -168,7 +168,7 @@ export default function Hero() {
           <div style={{
             position: 'absolute',
             inset: '-10%',
-            background: 'radial-gradient(ellipse 70% 70% at 50% 50%, rgba(201, 75, 26, 0.12) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse 70% 70% at 50% 50%, rgba(201, 75, 26, 0.06) 0%, transparent 70%)',
             pointerEvents: 'none',
             zIndex: 0,
           }} />
@@ -183,9 +183,9 @@ export default function Hero() {
               display: 'block',
               position: 'relative',
               zIndex: 1,
-              filter: 'contrast(18) invert(1)',
+              filter: 'contrast(18) invert(1) brightness(2.5)',
               mixBlendMode: 'screen',
-              opacity: 0.82,
+              opacity: 0.92,
             }}
           />
 
