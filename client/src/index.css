@@ -1,0 +1,274 @@
+/* ============================================================
+   JABRONI'S WOOD FIRED — Design System
+   Old World Fire. New World Smoke.
+   ============================================================ */
+
+:root {
+  /* Brand Colors */
+  --ember: #C94B1A;
+  --ember-glow: #E8622A;
+  --ember-deep: #7A2710;
+  --smoke: #1A1714;
+  --ash: #2D2925;
+  --char: #3D3530;
+  --cream: #F5EFE4;
+  --gold: #C9952A;
+  --gold-light: #E8B84B;
+  --bone: #E8DDD0;
+  --stage: #0F0D0B;
+  --curtain: #1E1510;
+
+  /* Typography */
+  --font-playfair: 'Playfair Display', serif;
+  --font-cormorant: 'Cormorant Garamond', serif;
+  --font-bebas: 'Bebas Neue', cursive;
+  --font-mono: 'DM Mono', monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background-color: var(--smoke);
+  color: var(--cream);
+  font-family: var(--font-cormorant);
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Typography base */
+h1, h2, h3, h4 {
+  font-family: var(--font-playfair);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* Selection */
+::selection {
+  background: var(--ember);
+  color: var(--cream);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--smoke);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--char);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ember);
+}
+
+/* Fire rule divider */
+.fire-rule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--gold);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.fire-rule::before,
+.fire-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ember), transparent);
+}
+
+/* Ember border */
+.ember-border-top {
+  border-top: 2px solid var(--ember);
+}
+
+.ember-border-bottom {
+  border-bottom: 2px solid var(--ember);
+}
+
+/* Eyebrow label style */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* Phase 2 badge */
+.phase-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: var(--char);
+  color: var(--gold);
+  padding: 3px 8px;
+  border: 1px solid var(--gold);
+}
+
+/* Button base */
+.btn {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: var(--ember);
+  color: var(--cream);
+}
+
+.btn-primary:hover {
+  background: var(--ember-glow);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid var(--cream);
+}
+
+.btn-ghost:hover {
+  border-color: var(--ember-glow);
+  color: var(--ember-glow);
+}
+
+.btn-ember-ghost {
+  background: transparent;
+  color: var(--ember-glow);
+  border: 1px solid var(--ember);
+}
+
+.btn-ember-ghost:hover {
+  background: var(--ember);
+  color: var(--cream);
+}
+
+/* Fade-in animation for scroll reveals */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* Jabroni watermark */
+.jabroni-watermark {
+  position: absolute;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+  filter: sepia(1) hue-rotate(-10deg) saturate(2);
+}
+
+/* Input styles */
+.form-input {
+  width: 100%;
+  background: var(--ash);
+  border: 1px solid var(--char);
+  color: var(--cream);
+  font-family: var(--font-cormorant);
+  font-size: 16px;
+  padding: 14px 16px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  border-radius: 0;
+  appearance: none;
+}
+
+.form-input:focus {
+  border-color: var(--ember);
+}
+
+.form-input::placeholder {
+  color: var(--char);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.form-input.error {
+  border-color: var(--ember-glow);
+}
+
+select.form-input {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C94B1A' stroke-width='1.5' fill='none' stroke-linecap='square'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+select.form-input option {
+  background: var(--ash);
+  color: var(--cream);
+}
+
+/* ============================================================
+   JABRONI SVG MASCOT — Inline SVG definitions
+   ============================================================ */
+
+/* The mascot is rendered as inline SVG components in React.
+   These styles control the mascot accent elements. */
+
+.mascot-accent {
+  fill: var(--ember);
+  opacity: 0.15;
+}
+
+/* ============================================================
+   Responsive utilities
+   ============================================================ */
+
+@media (max-width: 860px) {
+  .grid-col-2,
+  .grid-col-3 {
+    grid-template-columns: 1fr !important;
+  }
+}
