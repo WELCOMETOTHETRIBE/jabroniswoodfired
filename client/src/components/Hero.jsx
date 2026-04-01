@@ -210,7 +210,7 @@ export default function Hero() {
           }} />
 
           <img
-            src="/images/jabroni-logo-r0.jpg"
+            src="/images/jabroni-logo-transparent.png"
             alt="Jabroni's Wood Fired"
             style={{
               width: '100%',
@@ -219,8 +219,6 @@ export default function Hero() {
               display: 'block',
               position: 'relative',
               zIndex: 1,
-              borderRadius: '6px',
-              boxShadow: '0 0 60px rgba(201, 75, 26, 0.18), 0 0 120px rgba(201, 75, 26, 0.08)',
             }}
           />
 

@@ -35,14 +35,13 @@ export default function Footer() {
           {/* Logo + tagline */}
           <div>
             <img
-              src="/images/jabroni-logo-r0.jpg"
+              src="/images/jabroni-logo-transparent.png"
               alt="Jabroni's Wood Fired"
               style={{
                 height: '100px',
                 width: 'auto',
                 display: 'block',
                 marginBottom: '20px',
-                borderRadius: '4px',
                 opacity: 0.85,
               }}
               onError={(e) => {
