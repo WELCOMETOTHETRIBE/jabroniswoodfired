@@ -224,7 +224,7 @@ export default function Oven() {
               lineHeight: 1.8,
               letterSpacing: '0.3px',
             }}>
-              Every event we cater is the showroom. We don't pitch the oven — we cook with it. If you want one after that, you know where to find us.
+              Every event we cater is the showroom. We pull a Nonna's Ransom from the mouth of the oven, the fire crackles, and someone in the crowd goes quiet. That's the pitch. We don't do another one.
             </p>
             <p style={{
               fontFamily: 'var(--font-cormorant)',

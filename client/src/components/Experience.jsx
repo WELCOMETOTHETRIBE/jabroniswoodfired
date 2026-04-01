@@ -169,7 +169,7 @@ export default function Experience() {
             'From the moment the fire is lit, the cast is working.',
             'Between courses, the Femme Fatale owns the room. Not a stage — the room. Your guests are the audience, the backdrop, and occasionally the act.',
             'The Racketeer never announces himself. He takes the table next to yours.',
-            'Every element is choreographed to the meal. As the oven peaks, the room peaks with it. Course by course, act by act — until the final cut of meat hits the board and the whole thing lands exactly where it was always going.',
+            'Every element is choreographed to the meal. As the oven peaks, the room peaks with it. Course by course, act by act — until Pitmaster\'s Pride hits the board and Nonna\'s Ransom comes out of the fire, and the whole thing lands exactly where it was always going.',
             'You will not find this anywhere else in Southern California.',
           ].map((para, i) => (
             <p key={i} style={{

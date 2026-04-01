@@ -36,18 +36,30 @@ export default function PhaseBanner() {
 
       <span style={{ color: 'var(--char)', fontSize: '14px', flexShrink: 0 }}>·</span>
 
-      <p style={{
-        fontFamily: 'var(--font-mono)',
-        fontSize: '11px',
-        letterSpacing: '1.5px',
-        color: 'var(--bone)',
-        textAlign: 'center',
-        margin: 0,
-      }}>
-        Block parties · Graduations · Small weddings — Coachella Valley &amp; South Bay LA
-        <span style={{ color: 'var(--muted)', margin: '0 10px' }}>·</span>
-        BBQ catering, wood-fired pizza &amp; oven commissions
-      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center' }}>
+        <p style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '11px',
+          letterSpacing: '1.5px',
+          color: 'var(--bone)',
+          textAlign: 'center',
+          margin: 0,
+        }}>
+          Block parties · Graduations · Small weddings — Coachella Valley &amp; South Bay LA
+        </p>
+        <p style={{
+          fontFamily: 'var(--font-cormorant)',
+          fontSize: '0.95rem',
+          fontStyle: 'italic',
+          color: 'var(--bone)',
+          opacity: 0.6,
+          textAlign: 'center',
+          margin: 0,
+          letterSpacing: '0.3px',
+        }}>
+          Pitmaster's Pride · Nonna's Ransom · Holy Smoke · Calabrian Slaw · Campfire Caruso
+        </p>
+      </div>
 
       <style>{`
         @keyframes pulseDot {

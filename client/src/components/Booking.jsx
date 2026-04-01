@@ -158,7 +158,7 @@ export default function Booking() {
             <div className="reveal reveal-delay-3" style={{
               borderLeft: '2px solid var(--ember)',
               paddingLeft: '20px',
-              marginBottom: '40px',
+              marginBottom: '32px',
             }}>
               <p style={{
                 fontFamily: 'var(--font-cormorant)',
@@ -167,8 +167,46 @@ export default function Booking() {
                 color: 'var(--gold-light)',
                 lineHeight: 1.7,
               }}>
-                "We don't use gas. We never have. Every fire is wood, every smoke is real, every event leaves a mark."
+                "Every fire is wood. Every smoke is real. The Pitmaster's Pride doesn't happen in a kitchen — it happens over live coals, at your event, in front of your guests."
               </p>
+            </div>
+
+            {/* Dish teasers */}
+            <div className="reveal reveal-delay-3" style={{ marginBottom: '40px' }}>
+              <p style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '9px',
+                letterSpacing: '2px',
+                color: 'var(--ember)',
+                textTransform: 'uppercase',
+                marginBottom: '10px',
+              }}>
+                On the menu
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {[
+                  'Pitmaster\'s Pride',
+                  'Nonna\'s Ransom',
+                  'Hog\'s Share',
+                  'Holy Smoke',
+                  'Calabrian Slaw',
+                  'Campfire Caruso',
+                ].map(dish => (
+                  <span key={dish} style={{
+                    fontFamily: 'var(--font-cormorant)',
+                    fontSize: '0.9rem',
+                    fontStyle: 'italic',
+                    color: 'var(--bone)',
+                    opacity: 0.7,
+                    background: 'rgba(61, 53, 48, 0.4)',
+                    border: '1px solid var(--char)',
+                    padding: '4px 10px',
+                    letterSpacing: '0.2px',
+                  }}>
+                    {dish}
+                  </span>
+                ))}
+              </div>
             </div>
 
             {/* Contact notes */}

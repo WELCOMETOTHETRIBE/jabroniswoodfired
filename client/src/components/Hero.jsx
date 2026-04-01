@@ -142,17 +142,54 @@ export default function Hero() {
             </a>
           </div>
 
-          {/* Tagline */}
-          <p style={{
-            marginTop: '56px',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            letterSpacing: '3px',
-            color: 'var(--muted)',
-            textTransform: 'uppercase',
+          {/* On the fire strip */}
+          <div style={{
+            marginTop: '48px',
+            paddingTop: '24px',
+            borderTop: '1px solid var(--char)',
           }}>
-            Old World Fire. New World Smoke.
-          </p>
+            <span style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '9px',
+              letterSpacing: '3px',
+              color: 'var(--ember)',
+              textTransform: 'uppercase',
+              display: 'block',
+              marginBottom: '12px',
+            }}>
+              On the fire
+            </span>
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '6px 20px',
+              alignItems: 'center',
+            }}>
+              {[
+                'Pitmaster\'s Pride',
+                'Nonna\'s Ransom',
+                'Holy Smoke',
+                'Feather & Flame',
+                'Campfire Caruso',
+              ].map((dish, i, arr) => (
+                <span key={dish} style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                  <span style={{
+                    fontFamily: 'var(--font-cormorant)',
+                    fontSize: '1rem',
+                    fontStyle: 'italic',
+                    color: 'var(--bone)',
+                    opacity: 0.75,
+                    letterSpacing: '0.2px',
+                  }}>
+                    {dish}
+                  </span>
+                  {i < arr.length - 1 && (
+                    <span style={{ color: 'var(--char)', fontSize: '10px', opacity: 0.6 }}>·</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* RIGHT — logo */}
