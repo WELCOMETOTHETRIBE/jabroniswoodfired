@@ -178,7 +178,7 @@ export default function Oven() {
           marginBottom: '48px',
           maxWidth: '560px',
         }}>
-          We commission wood-fired ovens built to order — permanent installations for estates and restaurants, or mobile rigs we bring to events. Every oven is hand-laid brick, every commission starts with a conversation.
+          A wood-fired oven is a living thing. It breathes. It holds heat in the brick long after the fire dies down. Fueled by olive wood and built with hand-laid firebrick the way southern Italian masons have done for centuries, each oven we commission carries a lineage that predates every kitchen appliance you've ever owned. Static builds for estates and restaurants. Mobile rigs that come to you.
         </p>
 
         {/* Two-column layout */}
@@ -224,7 +224,7 @@ export default function Oven() {
               lineHeight: 1.8,
               letterSpacing: '0.3px',
             }}>
-              Every event we cater is the showroom. We pull a Nonna's Ransom from the mouth of the oven, the fire crackles, and someone in the crowd goes quiet. That's the pitch. We don't do another one.
+              Every event we cater is the showroom. The smell of olive wood reaches the crowd before the food does. We pull Nonna's Ransom from the mouth of the oven, the brick radiates, someone goes quiet. That's the whole pitch. We don't do another one.
             </p>
             <p style={{
               fontFamily: 'var(--font-cormorant)',

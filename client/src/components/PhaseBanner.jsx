@@ -57,7 +57,7 @@ export default function PhaseBanner() {
           margin: 0,
           letterSpacing: '0.3px',
         }}>
-          Pitmaster's Pride · Nonna's Ransom · Holy Smoke · Calabrian Slaw · Campfire Caruso
+          Olive wood. Hickory. A fire lit by hand. The smell hits you before the food does.
         </p>
       </div>
 

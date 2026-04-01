@@ -152,7 +152,7 @@ export default function Booking() {
               lineHeight: 1.8,
               marginBottom: '32px',
             }}>
-              Fill out the form. We respond within 24 hours. No automated replies, no templates — a real conversation about your event.
+              Fill out the form. We respond within 24 hours — no templates, no automated replies. A real conversation about your event, your people, and what we're going to cook together over an open fire.
             </p>
 
             <div className="reveal reveal-delay-3" style={{
@@ -167,7 +167,7 @@ export default function Booking() {
                 color: 'var(--gold-light)',
                 lineHeight: 1.7,
               }}>
-                "Every fire is wood. Every smoke is real. The Pitmaster's Pride doesn't happen in a kitchen — it happens over live coals, at your event, in front of your guests."
+                "The smoke reaches your guests before the food does. Olive wood, hickory — it carries across a block party, fills a backyard, stops a conversation. There is no shortcut to that smell. We've never looked for one."
               </p>
             </div>
 

@@ -200,7 +200,7 @@ export default function Menu() {
         </div>
 
         <div className="reveal reveal-delay-1" style={{ marginBottom: '8px' }}>
-          <span className="eyebrow">What's on the Fire</span>
+          <span className="eyebrow">Olive Wood · Hickory · Live Fire · Italian Heritage</span>
         </div>
         <h2 className="reveal reveal-delay-2" style={{
           fontFamily: 'var(--font-playfair)',
@@ -210,8 +210,8 @@ export default function Menu() {
           marginBottom: '16px',
           letterSpacing: '-0.5px',
         }}>
-          The Don of{' '}
-          <em style={{ color: 'var(--ember-glow)', fontStyle: 'italic' }}>Wood Fired Dining.</em>
+          Built by the Fire,{' '}
+          <em style={{ color: 'var(--ember-glow)', fontStyle: 'italic' }}>Shared at the Table.</em>
         </h2>
         <p className="reveal reveal-delay-2" style={{
           fontFamily: 'var(--font-cormorant)',
@@ -222,7 +222,7 @@ export default function Menu() {
           marginBottom: '48px',
           maxWidth: '560px',
         }}>
-          Your time, our flame. Every item on this menu is built around the fire — not the other way around.
+          Everything on this menu exists because of the fire. The brisket smokes for twelve hours over hickory. The pizza blisters in ninety seconds against live oak flame. The olive wood gives a sweetness that no oven, no broiler, no gas burner has ever replicated. This is the menu the fire makes possible.
         </p>
 
         {/* Tabs */}

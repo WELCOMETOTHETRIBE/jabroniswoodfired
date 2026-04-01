@@ -357,7 +357,7 @@ export default function Packages() {
           marginBottom: '48px',
           maxWidth: '560px',
         }}>
-          We bring the fire to you — wood-fired pizza, slow-smoked BBQ, and the open-pit Santa Maria grill (coming soon). Every event is set up, staffed, and broken down by us.
+          Fire is the oldest communal act there is. Long before restaurants, long before kitchens, people gathered around it — cooked over it, fed each other from it, and called that a meal. We haven't improved on that tradition. We've spent ninety years getting exceptionally good at it.
         </p>
 
         {/* Tabs */}

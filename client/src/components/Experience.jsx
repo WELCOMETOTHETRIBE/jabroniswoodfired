@@ -166,11 +166,11 @@ export default function Experience() {
           textAlign: 'left',
         }}>
           {[
-            'From the moment the fire is lit, the cast is working.',
-            'Between courses, the Femme Fatale owns the room. Not a stage — the room. Your guests are the audience, the backdrop, and occasionally the act.',
-            'The Racketeer never announces himself. He takes the table next to yours.',
-            'Every element is choreographed to the meal. As the oven peaks, the room peaks with it. Course by course, act by act — until Pitmaster\'s Pride hits the board and Nonna\'s Ransom comes out of the fire, and the whole thing lands exactly where it was always going.',
-            'You will not find this anywhere else in Southern California.',
+            'The ceremony begins when the wood catches. Two hours before the first guest arrives, olive wood and hickory go into the mouth of the oven. The fire is coaxed — not rushed — until the dome glows and the brick holds its heat like a memory. This is how it has been done in our family since 1933. The meal starts here, in the silence before anyone sits down.',
+            'By the time your guests arrive, the smoke has already done something to the air. It carries differently — olive wood has a sweetness to it, hickory brings the depth. People lean toward the fire without knowing why. That pull is ancient. We didn\'t invent it. We just know how to use it.',
+            'Between courses, the Femme Fatale owns the room. The Racketeer is already at the table next to yours. Nobody announced him. The Chanteuse doesn\'t need a stage. Every element moves with the fire — as the oven peaks, the room peaks with it.',
+            'Course by course, act by act — until Pitmaster\'s Pride hits the board and Nonna\'s Ransom comes out of the brick, and the smoke and the performance and the table full of people who didn\'t know each other three hours ago all land exactly where this was always going.',
+            'Communal. Ceremonial. Unrepeatable.',
           ].map((para, i) => (
             <p key={i} style={{
               fontFamily: 'var(--font-cormorant)',

@@ -119,7 +119,7 @@ export default function Hero() {
             letterSpacing: '0.3px',
             maxWidth: '480px',
           }}>
-            Wood-fired pizza and live-fire BBQ catering for block parties, graduations, and small weddings. Hand-built and hand-fired in Southern California. No gas. Ever.
+            The fire starts two hours before the first guest arrives. Olive wood and hickory, laid by hand, coaxed to temperature the slow way — the way our family has done it since 1933. By the time the smoke reaches the street, something primal has already happened. The meal hasn't even begun.
           </p>
 
           {/* CTAs */}
@@ -157,7 +157,7 @@ export default function Hero() {
               display: 'block',
               marginBottom: '12px',
             }}>
-              On the fire
+              Burning tonight
             </span>
             <div style={{
               display: 'flex',
