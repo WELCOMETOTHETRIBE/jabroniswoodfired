@@ -62,14 +62,13 @@ export default function Nav() {
           }}
         >
           <img
-            src="/images/jabroni-logo.png"
+            src="/images/jabroni-logo-r0.jpg"
             alt="Jabroni's Wood Fired"
             style={{
-              height: '52px',
+              height: '56px',
               width: 'auto',
-              filter: 'contrast(18) invert(1)',
-              mixBlendMode: 'screen',
-              opacity: 0.92,
+              display: 'block',
+              borderRadius: '3px',
             }}
             onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }}
           />

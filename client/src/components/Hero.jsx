@@ -210,18 +210,17 @@ export default function Hero() {
           }} />
 
           <img
-            src="/images/jabroni-logo.png"
+            src="/images/jabroni-logo-r0.jpg"
             alt="Jabroni's Wood Fired"
             style={{
               width: '100%',
-              maxWidth: '520px',
+              maxWidth: '480px',
               height: 'auto',
               display: 'block',
               position: 'relative',
               zIndex: 1,
-              filter: 'contrast(18) invert(1) brightness(2.5)',
-              mixBlendMode: 'screen',
-              opacity: 0.92,
+              borderRadius: '6px',
+              boxShadow: '0 0 60px rgba(201, 75, 26, 0.18), 0 0 120px rgba(201, 75, 26, 0.08)',
             }}
           />
 
@@ -266,7 +265,7 @@ export default function Hero() {
             order: -1;
           }
           #hero .hero-grid > div:last-child img {
-            max-width: 240px !important;
+            max-width: 260px !important;
           }
         }
         @media (max-width: 480px) {
