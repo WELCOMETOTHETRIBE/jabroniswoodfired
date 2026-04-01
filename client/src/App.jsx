@@ -139,11 +139,11 @@ export default function App() {
         <Hero />
         <PhaseBanner />
         <SectionDivider />
-        <Experience />
-        <SectionDivider />
         <Packages />
         <SectionDivider />
         <Oven />
+        <SectionDivider />
+        <Experience />
         <SectionDivider />
         <Booking />
       </main>

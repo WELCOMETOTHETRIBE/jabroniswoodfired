@@ -4,9 +4,9 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   const navLinks = [
+    { label: 'Catering', href: '#packages' },
+    { label: 'Oven Commissions', href: '#oven' },
     { label: 'The Experience', href: '#experience' },
-    { label: 'Packages', href: '#packages' },
-    { label: 'The Oven', href: '#oven' },
     { label: 'Book the Fire', href: '#booking' },
   ]
 
@@ -72,7 +72,7 @@ export default function Footer() {
             <p style={{
               fontFamily: 'var(--font-cormorant)',
               fontSize: '0.9rem',
-              color: 'var(--char)',
+              color: 'var(--muted)',
               marginTop: '8px',
               letterSpacing: '0.3px',
             }}>
@@ -93,12 +93,13 @@ export default function Footer() {
                       fontSize: '11px',
                       letterSpacing: '2px',
                       textTransform: 'uppercase',
-                      color: 'var(--char)',
+                      color: 'var(--bone)',
+                      opacity: 0.5,
                       textDecoration: 'none',
-                      transition: 'color 0.2s ease',
+                      transition: 'color 0.2s ease, opacity 0.2s ease',
                     }}
-                    onMouseEnter={e => e.target.style.color = 'var(--ember-glow)'}
-                    onMouseLeave={e => e.target.style.color = 'var(--char)'}
+                    onMouseEnter={e => { e.target.style.color = 'var(--ember-glow)'; e.target.style.opacity = '1' }}
+                    onMouseLeave={e => { e.target.style.color = 'var(--bone)'; e.target.style.opacity = '0.5' }}
                   >
                     {link.label}
                   </a>
@@ -126,7 +127,7 @@ export default function Footer() {
           <p style={{
             fontFamily: 'var(--font-mono)',
             fontSize: '10px',
-            color: 'var(--char)',
+            color: 'var(--muted)',
             letterSpacing: '1.5px',
             textTransform: 'uppercase',
           }}>
@@ -135,7 +136,7 @@ export default function Footer() {
           <p style={{
             fontFamily: 'var(--font-mono)',
             fontSize: '10px',
-            color: 'var(--char)',
+            color: 'var(--muted)',
             letterSpacing: '1.5px',
             textTransform: 'uppercase',
           }}>

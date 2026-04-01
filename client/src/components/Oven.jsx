@@ -83,7 +83,7 @@ function ImageSlot({ src, alt, label, style = {} }) {
           fontFamily: 'var(--font-mono)',
           fontSize: '10px',
           letterSpacing: '2px',
-          color: 'var(--ember)',
+          color: 'var(--ember-glow)',
           textTransform: 'uppercase',
           textAlign: 'center',
           lineHeight: 1.8,
@@ -95,7 +95,7 @@ function ImageSlot({ src, alt, label, style = {} }) {
           fontFamily: 'var(--font-mono)',
           fontSize: '9px',
           letterSpacing: '1.5px',
-          color: 'var(--char)',
+          color: 'var(--muted)',
           textTransform: 'uppercase',
         }}>
           Your fire. Your photo. Coming soon.
@@ -156,22 +156,33 @@ export default function Oven() {
         </div>
 
         <div className="reveal reveal-delay-1">
-          <span className="eyebrow">Hand-Built. No Catalog.</span>
+          <span className="eyebrow">Static &amp; Mobile · Hand-Built · No Catalog</span>
         </div>
         <h2 className="reveal reveal-delay-2" style={{
           fontFamily: 'var(--font-playfair)',
           fontWeight: 900,
           fontSize: 'clamp(2rem, 4vw, 3.5rem)',
           color: 'var(--cream)',
-          margin: '12px 0 56px',
+          margin: '12px 0 20px',
           letterSpacing: '-0.5px',
         }}>
-          Built Different.{' '}
-          <em style={{ color: 'var(--ember-glow)', fontStyle: 'italic' }}>Cooked Proper.</em>
+          Built for Your Space.{' '}
+          <em style={{ color: 'var(--ember-glow)', fontStyle: 'italic' }}>Static or Mobile.</em>
         </h2>
+        <p className="reveal reveal-delay-2" style={{
+          fontFamily: 'var(--font-cormorant)',
+          fontSize: '1.1rem',
+          fontWeight: 300,
+          color: 'var(--bone)',
+          lineHeight: 1.75,
+          marginBottom: '48px',
+          maxWidth: '560px',
+        }}>
+          We commission wood-fired ovens built to order — permanent installations for estates and restaurants, or mobile rigs we bring to events. Every oven is hand-laid brick, every commission starts with a conversation.
+        </p>
 
         {/* Two-column layout */}
-        <div style={{
+        <div className="oven-grid" style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '64px',
@@ -213,12 +224,12 @@ export default function Oven() {
               lineHeight: 1.8,
               letterSpacing: '0.3px',
             }}>
-              Every guest is a potential buyer. Every event is the showroom. We don't pitch the oven — we cook with it. If you want one after that, you know where to find us.
+              Every event we cater is the showroom. We don't pitch the oven — we cook with it. If you want one after that, you know where to find us.
             </p>
             <p style={{
               fontFamily: 'var(--font-cormorant)',
               fontSize: '0.95rem',
-              color: 'var(--char)',
+              color: 'var(--muted)',
               marginTop: '12px',
               letterSpacing: '0.3px',
               fontStyle: 'italic',
@@ -317,7 +328,7 @@ export default function Oven() {
                         fontFamily: 'var(--font-mono)',
                         fontSize: '10px',
                         letterSpacing: '1.5px',
-                        color: 'var(--char)',
+                        color: 'var(--muted)',
                         textTransform: 'uppercase',
                       }}>
                         + {tier.inclusions.length - (tier.featured ? 4 : 3)} more inclusions
@@ -347,7 +358,7 @@ export default function Oven() {
               <p style={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: '10px',
-                color: 'var(--char)',
+                color: 'var(--muted)',
                 letterSpacing: '1.5px',
                 textAlign: 'center',
                 marginTop: '12px',
@@ -362,12 +373,11 @@ export default function Oven() {
 
       <style>{`
         @media (max-width: 860px) {
-          #oven [style*="gridTemplateColumns: '1fr 1fr'"] {
+          #oven { padding: 80px 0 !important; }
+          #oven > div { padding: 0 24px !important; }
+          #oven .oven-grid {
             grid-template-columns: 1fr !important;
             gap: 48px !important;
-          }
-          #oven [style*="padding: '0 48px'"] {
-            padding: 0 24px !important;
           }
         }
       `}</style>

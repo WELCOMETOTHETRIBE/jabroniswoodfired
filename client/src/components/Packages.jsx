@@ -3,17 +3,15 @@ import { JabroniIcon } from './JabroniSVG'
 
 const TABS = [
   { id: 'bbq', label: 'BBQ & Live-Fire', live: true },
-  { id: 'pizza', label: 'Wood-Fired Pizza', live: false },
-  { id: 'experience', label: 'A Jabroni\'s Evening', live: false },
+  { id: 'pizza', label: 'Wood-Fired Pizza', live: true },
+  { id: 'santamaria', label: 'Santa Maria Grill', live: false },
 ]
-
-// Which tabs show the Santa Maria add-on strip
-const SANTA_MARIA_TABS = new Set(['bbq', 'pizza', 'experience'])
 
 const PACKAGES = {
   bbq: [
     {
       name: 'Street Package',
+      tagline: 'Block parties & backyard events',
       price: '$28–$35',
       unit: '/head',
       min: '20 guests min',
@@ -29,6 +27,7 @@ const PACKAGES = {
     },
     {
       name: 'Signature BBQ',
+      tagline: 'Graduations & celebrations',
       price: '$45–$65',
       unit: '/head',
       min: '40 guests min',
@@ -46,6 +45,7 @@ const PACKAGES = {
     },
     {
       name: 'Full Feast',
+      tagline: 'Weddings & milestone events',
       price: '$85–$120',
       unit: '/head',
       min: '50 guests min',
@@ -65,11 +65,12 @@ const PACKAGES = {
   pizza: [
     {
       name: 'Pizza Add-On',
+      tagline: 'Add wood-fired pizza to any event',
       price: '+$15–$25',
       unit: '/head',
       min: 'Add to any booking',
       featured: false,
-      live: false,
+      live: true,
       inclusions: [
         'Wood-fired oven on-site',
         'Up to 4 pizza varieties',
@@ -80,11 +81,12 @@ const PACKAGES = {
     },
     {
       name: 'Pizza Feast',
+      tagline: 'Block parties & outdoor gatherings',
       price: '$55–$80',
       unit: '/head',
       min: '30 guests min',
       featured: true,
-      live: false,
+      live: true,
       inclusions: [
         'Dedicated wood-fired oven station',
         'Full pizza menu — 6+ varieties',
@@ -96,11 +98,12 @@ const PACKAGES = {
     },
     {
       name: 'BBQ + Pizza',
+      tagline: 'Graduations & small weddings',
       price: '$75–$95',
       unit: '/head',
       min: '40 guests min',
       featured: false,
-      live: false,
+      live: true,
       inclusions: [
         'Full wood-fired pizza station',
         'Full BBQ spread — 3 proteins',
@@ -111,139 +114,41 @@ const PACKAGES = {
       ],
     },
   ],
-  experience: [
+  santamaria: [
     {
-      name: 'A Jabroni\'s Evening',
-      price: '$300',
-      unit: '/head',
-      min: '40 guests min',
+      name: 'Santa Maria Add-On',
+      tagline: 'Open-fire grill layered onto any package',
+      price: 'Inquire',
+      unit: '',
+      min: 'Add to any booking',
       featured: true,
       live: false,
       inclusions: [
-        'Full live-fire dinner — custom menu',
-        'Cocktail Maestro — tableside service',
-        'Card Sharp — working the room all night',
-        'Flame Thrower — opens the evening',
-        'Burlesque Performer — between courses',
-        'The Comedian — embedded, not staged',
-        'Custom scripted to your event & venue',
+        'Traditional Santa Maria-style open pit',
+        'Tri-tip over live oak coals',
+        'Pinquito beans from scratch',
+        'Grilled bread & salsa',
+        'West Coast\'s oldest fire technique',
+        'Pairs with BBQ or pizza packages',
       ],
     },
     {
-      name: 'Resort Residency',
-      price: 'Custom',
+      name: 'Santa Maria Full Experience',
+      tagline: 'The complete Central Coast tradition',
+      price: 'Inquire',
       unit: '',
-      min: 'Recurring partnership',
+      min: '30 guests min',
       featured: false,
       live: false,
       inclusions: [
-        'Ongoing residency structure',
-        'Monthly or seasonal programming',
-        'Co-branded event design',
-        'Dedicated production team',
-        'Flexible format — dinner, brunch, private',
-        'Partnership pricing',
+        'Dedicated Santa Maria pit station',
+        'Full tri-tip & side beef menu',
+        'Classic salsa, beans & garlic bread',
+        'Staffed live-fire service',
+        'Custom menu consultation',
       ],
     },
   ],
-}
-
-// Santa Maria add-on — appears below the grid for BBQ, Pizza, and Experience
-function SantaMariaAddon() {
-  const scrollToBooking = (e) => {
-    e.preventDefault()
-    document.querySelector('#booking')?.scrollIntoView({ behavior: 'smooth' })
-  }
-
-  return (
-    <div style={{
-      marginTop: '2px',
-      padding: '28px 32px',
-      background: 'rgba(201, 75, 26, 0.04)',
-      border: '1px solid var(--char)',
-      borderLeft: '3px solid var(--ember)',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '32px',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flex: 1 }}>
-        {/* Icon / label */}
-        <div style={{
-          fontFamily: 'var(--font-bebas)',
-          fontSize: '1.8rem',
-          color: 'var(--ember)',
-          lineHeight: 1,
-          letterSpacing: '1px',
-          flexShrink: 0,
-          paddingTop: '2px',
-        }}>
-          +
-        </div>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '6px', flexWrap: 'wrap' }}>
-            <h3 style={{
-              fontFamily: 'var(--font-playfair)',
-              fontSize: '1.2rem',
-              fontWeight: 700,
-              color: 'var(--cream)',
-              letterSpacing: '-0.2px',
-            }}>
-              Santa Maria Add-On
-            </h3>
-            <span className="phase-badge">Lighting Soon</span>
-          </div>
-          <p style={{
-            fontFamily: 'var(--font-cormorant)',
-            fontSize: '1rem',
-            fontWeight: 300,
-            color: 'var(--bone)',
-            lineHeight: 1.65,
-            maxWidth: '520px',
-          }}>
-            Open-fire Santa Maria grill layered onto any package — BBQ, pizza, or the full evening. Tri-tip over live coals, pinquito beans from scratch, grilled bread. The oldest fire technique on the West Coast, added to whatever you've already got burning.
-          </p>
-          <div style={{ display: 'flex', gap: '24px', marginTop: '12px', flexWrap: 'wrap' }}>
-            {[
-              'Add to BBQ & Live-Fire',
-              'Add to Wood-Fired Pizza',
-              'Add to A Jabroni\'s Evening',
-            ].map(tag => (
-              <span key={tag} style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '9px',
-                letterSpacing: '1.5px',
-                color: 'var(--char)',
-                textTransform: 'uppercase',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-              }}>
-                <span style={{ color: 'var(--ember)', fontSize: '10px' }}>—</span>
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <a
-        href="#booking"
-        onClick={scrollToBooking}
-        className="btn btn-ghost"
-        style={{
-          fontSize: '11px',
-          letterSpacing: '2px',
-          padding: '12px 24px',
-          whiteSpace: 'nowrap',
-          flexShrink: 0,
-        }}
-      >
-        Get Notified →
-      </a>
-    </div>
-  )
 }
 
 function PackageCard({ pkg }) {
@@ -285,14 +190,14 @@ function PackageCard({ pkg }) {
           textTransform: 'uppercase',
           whiteSpace: 'nowrap',
         }}>
-          {pkg.live ? 'Most Popular' : 'Flagship'}
+          {pkg.live ? 'Most Popular' : 'Coming Soon'}
         </div>
       )}
 
-      {/* Phase badge */}
-      {!pkg.live && (
+      {/* Coming soon badge */}
+      {!pkg.live && !pkg.featured && (
         <div style={{ position: 'absolute', top: '16px', right: '16px' }}>
-          <span className="phase-badge">Lighting Soon</span>
+          <span className="phase-badge">Coming Soon</span>
         </div>
       )}
 
@@ -302,12 +207,26 @@ function PackageCard({ pkg }) {
         fontSize: '1.4rem',
         fontWeight: 700,
         color: 'var(--cream)',
-        marginBottom: '8px',
+        marginBottom: '4px',
         marginTop: pkg.featured ? '12px' : '0',
         letterSpacing: '-0.2px',
       }}>
         {pkg.name}
       </h3>
+
+      {/* Tagline */}
+      {pkg.tagline && (
+        <p style={{
+          fontFamily: 'var(--font-cormorant)',
+          fontSize: '0.9rem',
+          fontStyle: 'italic',
+          color: 'var(--gold)',
+          marginBottom: '12px',
+          lineHeight: 1.4,
+        }}>
+          {pkg.tagline}
+        </p>
+      )}
 
       {/* Price */}
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px', marginBottom: '4px' }}>
@@ -359,7 +278,7 @@ function PackageCard({ pkg }) {
             gap: '10px',
             alignItems: 'flex-start',
           }}>
-            <span style={{ color: 'var(--ember)', flexShrink: 0, marginTop: '2px', fontSize: '12px' }}>—</span>
+            <span style={{ color: 'var(--ember-glow)', flexShrink: 0, marginTop: '2px', fontSize: '12px' }}>—</span>
             {item}
           </li>
         ))}
@@ -372,11 +291,7 @@ function PackageCard({ pkg }) {
         className={`btn ${pkg.featured ? 'btn-primary' : pkg.live ? 'btn-ember-ghost' : 'btn-ghost'}`}
         style={{ textAlign: 'center', fontSize: '11px', letterSpacing: '2px', padding: '13px 24px' }}
       >
-        {pkg.live
-          ? 'Book This →'
-          : pkg.price === 'Custom'
-          ? 'Express Interest →'
-          : 'Get Notified →'}
+        {pkg.live ? 'Book This →' : 'Get Notified →'}
       </a>
     </div>
   )
@@ -414,24 +329,36 @@ export default function Packages() {
 
         {/* Section header */}
         <div className="fire-rule reveal" style={{ marginBottom: '48px' }}>
-          <span>Packages</span>
+          <span>Catering</span>
           <JabroniIcon style={{ width: '24px', height: '24px', color: 'var(--ember)', flexShrink: 0 }} />
-          <span>Packages</span>
+          <span>Live Fire</span>
         </div>
 
         <div className="reveal reveal-delay-1" style={{ marginBottom: '8px' }}>
-          <span className="eyebrow">Choose Your Fire</span>
+          <span className="eyebrow">Block Parties · Graduations · Small Weddings</span>
         </div>
         <h2 className="reveal reveal-delay-2" style={{
           fontFamily: 'var(--font-playfair)',
           fontWeight: 900,
           fontSize: 'clamp(2rem, 4vw, 3.5rem)',
           color: 'var(--cream)',
-          marginBottom: '56px',
+          marginBottom: '20px',
           letterSpacing: '-0.5px',
         }}>
-          Every Fire, Priced Right.
+          Real Fire for{' '}
+          <em style={{ color: 'var(--ember-glow)', fontStyle: 'italic' }}>Real Events.</em>
         </h2>
+        <p className="reveal reveal-delay-2" style={{
+          fontFamily: 'var(--font-cormorant)',
+          fontSize: '1.1rem',
+          fontWeight: 300,
+          color: 'var(--bone)',
+          lineHeight: 1.75,
+          marginBottom: '48px',
+          maxWidth: '560px',
+        }}>
+          We bring the fire to you — wood-fired pizza, slow-smoked BBQ, and the open-pit Santa Maria grill (coming soon). Every event is set up, staffed, and broken down by us.
+        </p>
 
         {/* Tabs */}
         <div className="reveal reveal-delay-3" style={{
@@ -456,15 +383,16 @@ export default function Packages() {
                 fontSize: '11px',
                 letterSpacing: '2px',
                 textTransform: 'uppercase',
-                color: activeTab === tab.id ? 'var(--ember-glow)' : 'var(--char)',
-                transition: 'color 0.2s ease, border-color 0.2s ease',
+                color: activeTab === tab.id ? 'var(--ember-glow)' : 'var(--bone)',
+                opacity: activeTab === tab.id ? 1 : 0.55,
+                transition: 'color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
                 whiteSpace: 'nowrap',
               }}
-              onMouseEnter={e => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--bone)' }}
-              onMouseLeave={e => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--char)' }}
+              onMouseEnter={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.color = 'var(--bone)' } }}
+              onMouseLeave={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.55'; e.currentTarget.style.color = 'var(--bone)' } }}
             >
               {tab.label}
               {tab.live && (
@@ -474,7 +402,21 @@ export default function Packages() {
                   height: '6px',
                   borderRadius: '50%',
                   background: 'var(--gold)',
+                  flexShrink: 0,
                 }} />
+              )}
+              {!tab.live && (
+                <span style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '8px',
+                  letterSpacing: '1px',
+                  color: 'var(--gold)',
+                  border: '1px solid var(--gold)',
+                  padding: '1px 5px',
+                  opacity: 0.7,
+                }}>
+                  Soon
+                </span>
               )}
             </button>
           ))}
@@ -491,14 +433,11 @@ export default function Packages() {
           ))}
         </div>
 
-        {/* Santa Maria add-on strip */}
-        {SANTA_MARIA_TABS.has(activeTab) && <SantaMariaAddon />}
-
         {/* Footnote */}
         <p style={{
           fontFamily: 'var(--font-mono)',
           fontSize: '10px',
-          color: 'var(--char)',
+          color: 'var(--muted)',
           letterSpacing: '1.5px',
           marginTop: '32px',
           textAlign: 'center',
@@ -517,6 +456,15 @@ export default function Packages() {
           }
           #packages > div {
             padding: 80px 24px !important;
+          }
+          #packages [style*="gap: '2px'"][style*="flexWrap: 'wrap'"] {
+            gap: 0 !important;
+          }
+        }
+        @media (max-width: 480px) {
+          #packages [style*="padding: '14px 24px'"] {
+            padding: 12px 16px !important;
+            font-size: 10px !important;
           }
         }
       `}</style>

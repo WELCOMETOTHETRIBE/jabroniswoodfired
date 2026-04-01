@@ -103,14 +103,14 @@ export default function Experience() {
 
         {/* Section divider */}
         <div className="fire-rule reveal" style={{ marginBottom: '64px', justifyContent: 'center' }}>
-          <span>Respect the Fire</span>
+          <span>Coming Soon</span>
           <JabroniIcon style={{ width: '28px', height: '28px', color: 'var(--ember)', flexShrink: 0 }} />
-          <span>Respect the Fire</span>
+          <span>A Look Ahead</span>
         </div>
 
         {/* Eyebrow */}
         <div className="reveal reveal-delay-1" style={{ marginBottom: '12px' }}>
-          <span className="eyebrow">Performance Dining · Coming Soon</span>
+          <span className="eyebrow">A Look Ahead · Coming Soon</span>
         </div>
 
         {/* Headline */}
@@ -132,12 +132,32 @@ export default function Experience() {
           fontSize: 'clamp(1.1rem, 2vw, 1.5rem)',
           fontWeight: 300,
           color: 'var(--gold-light)',
-          marginBottom: '64px',
+          marginBottom: '32px',
           letterSpacing: '0.5px',
           fontStyle: 'italic',
         }}>
           This is not dinner and a show. This is dinner as the show.
         </p>
+
+        {/* Look-ahead notice */}
+        <div className="reveal reveal-delay-3" style={{
+          display: 'inline-block',
+          marginBottom: '48px',
+          padding: '12px 24px',
+          border: '1px solid var(--char)',
+          background: 'rgba(201, 75, 26, 0.05)',
+        }}>
+          <p style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '10px',
+            letterSpacing: '2px',
+            color: 'var(--bone)',
+            textTransform: 'uppercase',
+            margin: 0,
+          }}>
+            This concept is in development — we're building toward it. Catering &amp; ovens are available now.
+          </p>
+        </div>
 
         {/* Body copy — prose form, left-aligned narrow column */}
         <div className="reveal reveal-delay-4" style={{
@@ -169,7 +189,7 @@ export default function Experience() {
             fontFamily: 'var(--font-cormorant)',
             fontSize: '1rem',
             fontStyle: 'italic',
-            color: 'var(--char)',
+            color: 'var(--muted)',
             marginTop: '20px',
             letterSpacing: '0.5px',
             lineHeight: 1.6,
@@ -210,7 +230,7 @@ export default function Experience() {
                   fontFamily: 'var(--font-mono)',
                   fontSize: '9px',
                   letterSpacing: '3px',
-                  color: 'var(--ember)',
+                  color: 'var(--gold)',
                   marginBottom: '10px',
                   textTransform: 'uppercase',
                 }}>
@@ -298,7 +318,7 @@ export default function Experience() {
           <a
             href="#booking"
             onClick={scrollToBooking}
-            className="btn btn-primary"
+            className="btn btn-ghost"
             style={{ fontSize: '12px', letterSpacing: '2px', padding: '16px 32px' }}
           >
             Express Interest
@@ -306,10 +326,10 @@ export default function Experience() {
           <a
             href="#packages"
             onClick={scrollToPackages}
-            className="btn btn-ghost"
+            className="btn btn-primary"
             style={{ fontSize: '12px', letterSpacing: '2px', padding: '16px 32px' }}
           >
-            See All Packages
+            Book Catering Now →
           </a>
         </div>
       </div>

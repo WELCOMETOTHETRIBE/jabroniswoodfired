@@ -44,9 +44,9 @@ export default function PhaseBanner() {
         textAlign: 'center',
         margin: 0,
       }}>
-        Live-fire catering in the Coachella Valley and South Bay LA
-        <span style={{ color: 'var(--char)', margin: '0 10px' }}>·</span>
-        Wood-fired pizza, A Jabroni's Evening &amp; oven commissions — inquire for availability
+        Block parties · Graduations · Small weddings — Coachella Valley &amp; South Bay LA
+        <span style={{ color: 'var(--muted)', margin: '0 10px' }}>·</span>
+        BBQ catering, wood-fired pizza &amp; oven commissions
       </p>
 
       <style>{`

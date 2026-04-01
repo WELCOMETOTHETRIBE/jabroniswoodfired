@@ -15,6 +15,7 @@
   --gold: #C9952A;
   --gold-light: #E8B84B;
   --bone: #E8DDD0;
+  --muted: #8A7F76;   /* AA-compliant de-emphasized text — 4.9:1 on --smoke */
   --stage: #0F0D0B;
   --curtain: #1E1510;
 
@@ -172,7 +173,7 @@ h1, h2, h3, h4 {
 
 .btn-ember-ghost {
   background: transparent;
-  color: var(--ember-glow);
+  color: var(--cream);
   border: 1px solid var(--ember);
 }
 
@@ -227,7 +228,7 @@ h1, h2, h3, h4 {
 }
 
 .form-input::placeholder {
-  color: var(--char);
+  color: var(--muted);
   font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 1px;
@@ -270,5 +271,37 @@ select.form-input option {
   .grid-col-2,
   .grid-col-3 {
     grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================================
+   Mobile-first global fixes
+   ============================================================ */
+
+@media (max-width: 640px) {
+  /* Ensure buttons don't clip on small screens */
+  .btn {
+    padding: 12px 20px;
+    font-size: 11px;
+  }
+
+  /* Fire rule text wraps cleanly */
+  .fire-rule {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  /* Eyebrow text never overflows */
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Phase badge stays compact */
+  .phase-badge {
+    font-size: 8px;
+    padding: 2px 6px;
   }
 }

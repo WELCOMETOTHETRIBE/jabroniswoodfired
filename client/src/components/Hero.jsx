@@ -21,9 +21,9 @@ export default function Hero() {
     document.querySelector('#booking')?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  const scrollToExperience = (e) => {
+  const scrollToOven = (e) => {
     e.preventDefault()
-    document.querySelector('#experience')?.scrollIntoView({ behavior: 'smooth' })
+    document.querySelector('#oven')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
@@ -74,7 +74,7 @@ export default function Hero() {
       }} />
 
       {/* Two-column layout */}
-      <div style={{
+      <div className="hero-grid" style={{
         position: 'relative',
         zIndex: 3,
         maxWidth: '1280px',
@@ -91,7 +91,7 @@ export default function Hero() {
         <div>
           {/* Eyebrow */}
           <div className="eyebrow" style={{ marginBottom: '32px', opacity: 0.8 }}>
-            Live-Fire Catering · Wood-Fired Ovens · Performance Dining
+            Block Parties · Graduations · Small Weddings
           </div>
 
           {/* Headline */}
@@ -104,9 +104,8 @@ export default function Hero() {
             marginBottom: '40px',
             letterSpacing: '-1px',
           }}>
-            No Gas.{' '}
-            <em style={{ color: 'var(--ember-glow)', fontStyle: 'italic' }}>No Gimmicks.</em>
-            {' '}Just Fire.
+            Your Event.{' '}
+            <em style={{ color: 'var(--ember-glow)', fontStyle: 'italic' }}>Real Fire.</em>
           </h1>
 
           {/* Subhead */}
@@ -120,7 +119,7 @@ export default function Hero() {
             letterSpacing: '0.3px',
             maxWidth: '480px',
           }}>
-            Premium live-fire catering, wood-fired oven manufacturing, and immersive performance dining — hand-built in Southern California.
+            Wood-fired pizza and live-fire BBQ catering for block parties, graduations, and small weddings. Hand-built and hand-fired in Southern California. No gas. Ever.
           </p>
 
           {/* CTAs */}
@@ -131,15 +130,15 @@ export default function Hero() {
               className="btn btn-primary"
               style={{ fontSize: '13px', letterSpacing: '2px', padding: '16px 36px' }}
             >
-              Book an Event
+              Book Your Event
             </a>
             <a
-              href="#experience"
-              onClick={scrollToExperience}
+              href="#oven"
+              onClick={scrollToOven}
               className="btn btn-ghost"
               style={{ fontSize: '13px', letterSpacing: '2px', padding: '16px 36px' }}
             >
-              The Experience →
+              Commission an Oven →
             </a>
           </div>
 
@@ -149,7 +148,7 @@ export default function Hero() {
             fontFamily: 'var(--font-mono)',
             fontSize: '11px',
             letterSpacing: '3px',
-            color: 'var(--char)',
+            color: 'var(--muted)',
             textTransform: 'uppercase',
           }}>
             Old World Fire. New World Smoke.
@@ -219,22 +218,26 @@ export default function Hero() {
         @media (max-width: 860px) {
           #hero .hero-grid {
             grid-template-columns: 1fr !important;
-          }
-        }
-        @media (max-width: 860px) {
-          #hero > div[style*="gridTemplateColumns"] {
-            grid-template-columns: 1fr !important;
             padding: 100px 24px 80px !important;
+            gap: 40px !important;
           }
-          #hero > div[style*="gridTemplateColumns"] h1 {
+          #hero .hero-grid h1 {
             font-size: clamp(2.4rem, 10vw, 4rem) !important;
           }
           /* On mobile, logo goes above the text */
-          #hero > div[style*="gridTemplateColumns"] > div:last-child {
+          #hero .hero-grid > div:last-child {
             order: -1;
           }
-          #hero > div[style*="gridTemplateColumns"] > div:last-child img {
-            max-width: 280px !important;
+          #hero .hero-grid > div:last-child img {
+            max-width: 240px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          #hero .hero-grid {
+            padding: 90px 20px 60px !important;
+          }
+          #hero .hero-grid h1 {
+            font-size: clamp(2rem, 12vw, 3rem) !important;
           }
         }
       `}</style>

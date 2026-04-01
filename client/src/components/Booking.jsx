@@ -120,7 +120,7 @@ export default function Booking() {
           <span>Inquire</span>
         </div>
 
-        <div style={{
+        <div className="booking-grid" style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1.6fr',
           gap: '80px',
@@ -210,7 +210,7 @@ export default function Booking() {
             ) : (
               <form onSubmit={handleSubmit} noValidate>
                 {/* Name row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                <div className="form-row-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                   <FormField
                     label="First Name"
                     name="firstName"
@@ -232,7 +232,7 @@ export default function Booking() {
                 </div>
 
                 {/* Email + Phone row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                <div className="form-row-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                   <FormField
                     label="Email"
                     name="email"
@@ -274,7 +274,7 @@ export default function Booking() {
                 </div>
 
                 {/* Guest count + Date/Location */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '12px', marginBottom: '12px' }}>
+                <div className="form-row-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '12px', marginBottom: '12px' }}>
                   <FormField
                     label="Guest Count"
                     name="guests"
@@ -344,7 +344,7 @@ export default function Booking() {
                 <p style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '9px',
-                  color: 'var(--char)',
+                  color: 'var(--muted)',
                   letterSpacing: '1.5px',
                   marginTop: '12px',
                   textAlign: 'center',
@@ -360,17 +360,14 @@ export default function Booking() {
 
       <style>{`
         @media (max-width: 860px) {
-          #booking [style*="gridTemplateColumns: '1fr 1.6fr'"] {
+          #booking { padding: 80px 0 !important; }
+          #booking > div { padding: 0 24px !important; }
+          #booking .booking-grid {
             grid-template-columns: 1fr !important;
             gap: 48px !important;
           }
-          #booking [style*="padding: '0 48px'"] {
-            padding: 0 24px !important;
-          }
-          #booking [style*="gridTemplateColumns: '1fr 1fr'"] {
-            grid-template-columns: 1fr !important;
-          }
-          #booking [style*="gridTemplateColumns: '1fr 1.5fr'"] {
+          #booking .form-row-2col,
+          #booking .form-row-3col {
             grid-template-columns: 1fr !important;
           }
         }
