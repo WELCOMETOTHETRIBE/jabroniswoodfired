@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { JabroniIcon } from './JabroniSVG'
 
 function useReveal(ref) {
@@ -23,28 +23,49 @@ function useReveal(ref) {
 const cast = [
   {
     role: 'The Femme Fatale',
+    pronunciation: 'fem fəˈtäl',
+    wordType: 'French · noun',
+    etymology: 'femme "woman" + fatale "deadly"',
+    definition: 'A woman of irresistible charm whose presence rearranges a room without effort. Power that is ambient, not performed. She doesn\'t enter — she arrives.',
     description: 'She arrives before the fire does. By the end of the night, your guests won\'t remember what they ate — only her. That\'s the point.',
   },
   {
     role: 'The Consigliere',
+    pronunciation: 'kɔnsiʎˈʎɛːre',
+    wordType: 'Italian · noun',
+    etymology: 'from consiglio, "counsel"',
+    definition: 'Senior adviser within a traditional Italian family structure. Outranks the capo. The one person whose opinion is always sought and never ignored.',
     description: 'Every table gets a visit. Every glass stays full. He knows your name before you introduce yourself, and he never explains how.',
   },
   {
     role: 'The Pit Boss',
+    pronunciation: 'pɪt · bɒs',
+    wordType: 'American English · noun',
+    etymology: 'originally: the casino floor supervisor who watches every hand',
+    definition: 'The one who commands the fire. Reads the heat, manages the cook, answers to no one. In a casino, he watches the table. Here, he is the table.',
     description: 'Commands the fire like a negotiation he\'s already won. The smoke doesn\'t follow the wind. It follows him.',
   },
   {
     role: 'The Racketeer',
+    pronunciation: 'ˌrakəˈtɪr',
+    wordType: 'noun · first recorded 1928, Chicago',
+    etymology: 'from racket — a scheme of dubious legitimacy',
+    definition: 'One who operates with confidence, charm, and just enough misdirection. He\'s never been caught because it never looks like a scheme. It just looks like a very good evening.',
     description: 'Works the room like it owes him something. Cards, sleight of hand, conversation — never caught, and your guests will love him for it.',
   },
   {
     role: 'The Chanteuse',
+    pronunciation: 'ʃɑ̃ˈtøːz',
+    wordType: 'French · noun, feminine',
+    etymology: 'from chanter, "to sing"',
+    definition: 'A cabaret singer who inhabits a room rather than performing for it. The art form predates the microphone. The best practitioners still don\'t need one.',
     description: 'No mic. No stage. Just a voice that stops the room mid-sentence and makes everyone feel like the evening was written for them personally.',
   },
 ]
 
 export default function Experience() {
   const sectionRef = useRef(null)
+  const [hoveredIndex, setHoveredIndex] = useState(null)
   useReveal(sectionRef)
 
   const scrollToBooking = (e) => {
@@ -212,6 +233,14 @@ export default function Experience() {
         }}>
           {cast.map((member, i) => {
             const isMid = i === 2
+            const isHovered = hoveredIndex === i
+            // Anchor tooltip left for first card, right for last, centered otherwise
+            const tooltipAlign = i === 0
+              ? { left: 0, transform: 'none' }
+              : i === 4
+              ? { right: 0, left: 'auto', transform: 'none' }
+              : { left: '50%', transform: 'translateX(-50%)' }
+
             return (
               <div
                 key={member.role}
@@ -222,10 +251,104 @@ export default function Experience() {
                   borderBottom: isMid ? '2px solid var(--ember)' : 'none',
                   transition: 'background 0.3s ease',
                   textAlign: 'left',
+                  position: 'relative',
+                  cursor: 'default',
                 }}
-                onMouseEnter={e => e.currentTarget.style.background = 'var(--ash)'}
-                onMouseLeave={e => e.currentTarget.style.background = isMid ? 'var(--ash)' : 'rgba(45, 41, 37, 0.4)'}
+                onMouseEnter={() => { setHoveredIndex(i) }}
+                onMouseLeave={() => { setHoveredIndex(null) }}
               >
+                {/* Definition tooltip */}
+                <div
+                  className={`cast-tooltip${isHovered ? ' cast-tooltip--visible' : ''}`}
+                  style={{
+                    position: 'absolute',
+                    bottom: 'calc(100% + 14px)',
+                    width: '268px',
+                    background: 'var(--stage)',
+                    border: '1px solid var(--char)',
+                    borderTop: '2px solid var(--gold)',
+                    padding: '18px 20px 16px',
+                    zIndex: 30,
+                    pointerEvents: 'none',
+                    ...tooltipAlign,
+                  }}
+                >
+                  {/* Pronunciation + type */}
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: '8px',
+                    marginBottom: '6px',
+                    flexWrap: 'wrap',
+                  }}>
+                    <span style={{
+                      fontFamily: 'var(--font-cormorant)',
+                      fontSize: '0.85rem',
+                      fontStyle: 'italic',
+                      color: 'var(--bone)',
+                      opacity: 0.7,
+                      letterSpacing: '0.3px',
+                    }}>
+                      /{member.pronunciation}/
+                    </span>
+                    <span style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '8px',
+                      letterSpacing: '1.5px',
+                      color: 'var(--gold)',
+                      textTransform: 'uppercase',
+                      flexShrink: 0,
+                    }}>
+                      {member.wordType}
+                    </span>
+                  </div>
+
+                  {/* Etymology */}
+                  <p style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '8.5px',
+                    letterSpacing: '1px',
+                    color: 'var(--muted)',
+                    marginBottom: '10px',
+                    textTransform: 'none',
+                    fontStyle: 'normal',
+                    lineHeight: 1.5,
+                  }}>
+                    {member.etymology}
+                  </p>
+
+                  {/* Divider */}
+                  <div style={{ height: '1px', background: 'var(--char)', marginBottom: '10px' }} />
+
+                  {/* Definition */}
+                  <p style={{
+                    fontFamily: 'var(--font-cormorant)',
+                    fontSize: '0.95rem',
+                    fontWeight: 300,
+                    color: 'var(--bone)',
+                    lineHeight: 1.65,
+                    fontStyle: 'italic',
+                    margin: 0,
+                  }}>
+                    {member.definition}
+                  </p>
+
+                  {/* Downward arrow */}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '-7px',
+                    left: i === 0 ? '28px' : i === 4 ? 'auto' : '50%',
+                    right: i === 4 ? '28px' : 'auto',
+                    transform: (i === 0 || i === 4) ? 'none' : 'translateX(-50%)',
+                    width: 0,
+                    height: 0,
+                    borderLeft: '7px solid transparent',
+                    borderRight: '7px solid transparent',
+                    borderTop: '7px solid var(--char)',
+                  }} />
+                </div>
+
                 <div style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '9px',
@@ -335,6 +458,31 @@ export default function Experience() {
       </div>
 
       <style>{`
+        .cast-tooltip {
+          opacity: 0;
+          transform: translateX(var(--tt-x, -50%)) translateY(6px);
+          transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .cast-tooltip[style*="left: 0"] {
+          --tt-x: 0px;
+          transform: translateY(6px);
+        }
+        .cast-tooltip[style*="right: 0"] {
+          transform: translateY(6px);
+        }
+        .cast-tooltip--visible {
+          opacity: 1;
+        }
+        .cast-tooltip--visible[style*="left: 0"],
+        .cast-tooltip--visible[style*="right: 0"] {
+          transform: translateY(0);
+        }
+        .cast-tooltip--visible:not([style*="left: 0"]):not([style*="right: 0"]) {
+          transform: translateX(-50%) translateY(0);
+        }
+        @media (max-width: 860px) {
+          .cast-tooltip { display: none !important; }
+        }
         @media (max-width: 1024px) {
           #experience [style*="repeat(5, 1fr)"] {
             grid-template-columns: repeat(3, 1fr) !important;
