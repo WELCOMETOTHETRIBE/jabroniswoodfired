@@ -15,7 +15,6 @@ export default function Nav() {
     { label: 'Menu', href: '#menu' },
     { label: 'Oven Commissions', href: '#oven' },
     { label: 'The Experience', href: '#experience' },
-    { label: 'Book', href: '#booking' },
   ]
 
   const handleNavClick = (e, href) => {

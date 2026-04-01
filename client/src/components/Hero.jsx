@@ -222,28 +222,6 @@ export default function Hero() {
             }}
           />
 
-          {/* Heritage badge below the logo */}
-          <div style={{
-            position: 'relative',
-            zIndex: 1,
-            marginTop: '28px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-          }}>
-            <div style={{ height: '1px', width: '40px', background: 'var(--ember)', opacity: 0.5 }} />
-            <span style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '10px',
-              letterSpacing: '3px',
-              color: 'var(--gold)',
-              textTransform: 'uppercase',
-              opacity: 0.7,
-            }}>
-              Italian Heritage Since 1933
-            </span>
-            <div style={{ height: '1px', width: '40px', background: 'var(--ember)', opacity: 0.5 }} />
-          </div>
         </div>
 
       </div>
