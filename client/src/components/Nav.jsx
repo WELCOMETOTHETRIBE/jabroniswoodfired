@@ -12,6 +12,7 @@ export default function Nav() {
 
   const navLinks = [
     { label: 'Catering', href: '#packages' },
+    { label: 'Menu', href: '#menu' },
     { label: 'Oven Commissions', href: '#oven' },
     { label: 'The Experience', href: '#experience' },
     { label: 'Book', href: '#booking' },

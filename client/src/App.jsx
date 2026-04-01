@@ -5,6 +5,7 @@ import PhaseBanner from './components/PhaseBanner'
 import Experience from './components/Experience'
 import Packages from './components/Packages'
 import Oven from './components/Oven'
+import Menu from './components/Menu'
 import Booking from './components/Booking'
 import Footer from './components/Footer'
 import { JabroniShrug } from './components/JabroniSVG'
@@ -140,6 +141,8 @@ export default function App() {
         <PhaseBanner />
         <SectionDivider />
         <Packages />
+        <SectionDivider />
+        <Menu />
         <SectionDivider />
         <Oven />
         <SectionDivider />

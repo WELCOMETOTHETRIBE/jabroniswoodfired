@@ -5,6 +5,7 @@ export default function Footer() {
 
   const navLinks = [
     { label: 'Catering', href: '#packages' },
+    { label: 'Menu', href: '#menu' },
     { label: 'Oven Commissions', href: '#oven' },
     { label: 'The Experience', href: '#experience' },
     { label: 'Book the Fire', href: '#booking' },
