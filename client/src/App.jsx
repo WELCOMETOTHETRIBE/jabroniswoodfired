@@ -9,6 +9,8 @@ import Menu from './components/Menu'
 import Booking from './components/Booking'
 import Footer from './components/Footer'
 import { JabroniShrug } from './components/JabroniSVG'
+import AdminLogin from './components/AdminLogin'
+import AdminDashboard from './components/AdminDashboard'
 
 // Simple hash-based routing for 404 state
 function NotFound() {
@@ -101,6 +103,36 @@ export default function App() {
     // For single-page app, all routes resolve to home
     return false
   })
+
+  const [adminPage] = useState(() =>
+    window.location.pathname === '/admin' ||
+    window.location.pathname.startsWith('/admin/')
+  )
+  const [adminToken, setAdminToken] = useState(() =>
+    sessionStorage.getItem('jabroni_admin_token')
+  )
+
+  if (adminPage) {
+    if (!adminToken) {
+      return (
+        <AdminLogin
+          onLogin={(token) => {
+            sessionStorage.setItem('jabroni_admin_token', token)
+            setAdminToken(token)
+          }}
+        />
+      )
+    }
+    return (
+      <AdminDashboard
+        token={adminToken}
+        onLogout={() => {
+          sessionStorage.removeItem('jabroni_admin_token')
+          setAdminToken(null)
+        }}
+      />
+    )
+  }
 
   // Global scroll reveal observer
   useEffect(() => {

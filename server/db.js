@@ -1,0 +1,12 @@
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: false,
+});
+
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle DB client:', err.message);
+});
+
+module.exports = pool;

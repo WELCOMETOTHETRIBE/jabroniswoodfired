@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 
 const inquiryRouter = require('./routes/inquiry');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -23,6 +24,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/inquiry', inquiryRouter);
+app.use('/api/admin', adminRouter);
 
 if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(__dirname, '../client/dist');

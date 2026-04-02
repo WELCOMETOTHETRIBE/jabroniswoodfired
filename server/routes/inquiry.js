@@ -1,5 +1,6 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+const pool = require('../db');
 const router = express.Router();
 
 function createTransporter() {
@@ -90,6 +91,18 @@ Date & Location: ${dateLocation || '—'}
 Message:
 ${message || '—'}
   `.trim();
+
+  // Log to DB first — don't let an email failure lose the lead
+  try {
+    await pool.query(
+      `INSERT INTO inquiries (first_name, last_name, email, phone, type, guests, date_location, message)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [firstName, lastName, email, phone || null, type, guests || null, dateLocation || null, message || null]
+    );
+  } catch (dbErr) {
+    console.error('DB insert error:', dbErr.message);
+    // Don't block the response — still attempt email
+  }
 
   try {
     const transporter = createTransporter();
