@@ -25,7 +25,7 @@ export default function AdminLogin({ onLogin }) {
       const data = await res.json()
 
       if (res.ok && data.token) {
-        onLogin(data.token)
+        onLogin({ token: data.token, userId: data.userId })
       } else {
         setStatus('error')
         setError(data.error || 'Invalid credentials.')

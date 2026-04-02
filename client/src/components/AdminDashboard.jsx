@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { cookbookData } from '../data/recipes.js'
+import AdminUsers from './AdminUsers.jsx'
 
 // ─── Sidebar Nav Item ───────────────────────────────────────────────────────
 
@@ -568,7 +569,7 @@ function InquiriesViewer({ token }) {
 
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 
-export default function AdminDashboard({ onLogout, token }) {
+export default function AdminDashboard({ onLogout, token, currentUserId }) {
   const [activeTab, setActiveTab] = useState('cookbook')
 
   const handleLogout = async () => {
@@ -654,6 +655,11 @@ export default function AdminDashboard({ onLogout, token }) {
             active={activeTab === 'inquiries'}
             onClick={() => setActiveTab('inquiries')}
           />
+          <SidebarItem
+            label="Users"
+            active={activeTab === 'users'}
+            onClick={() => setActiveTab('users')}
+          />
           <SidebarItem label="Marketing" disabled sublabel="coming soon" />
           <SidebarItem label="Pricing" disabled sublabel="coming soon" />
         </aside>
@@ -663,6 +669,7 @@ export default function AdminDashboard({ onLogout, token }) {
           <div style={{ maxWidth: '900px' }}>
             {activeTab === 'cookbook' && <CookbookViewer />}
             {activeTab === 'inquiries' && <InquiriesViewer token={token} />}
+            {activeTab === 'users' && <AdminUsers token={token} currentUserId={currentUserId} />}
           </div>
         </main>
       </div>

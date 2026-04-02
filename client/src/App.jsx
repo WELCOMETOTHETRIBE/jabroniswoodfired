@@ -111,14 +111,20 @@ export default function App() {
   const [adminToken, setAdminToken] = useState(() =>
     sessionStorage.getItem('jabroni_admin_token')
   )
+  const [adminUserId, setAdminUserId] = useState(() => {
+    const id = sessionStorage.getItem('jabroni_admin_user_id')
+    return id ? parseInt(id) : null
+  })
 
   if (adminPage) {
     if (!adminToken) {
       return (
         <AdminLogin
-          onLogin={(token) => {
+          onLogin={({ token, userId }) => {
             sessionStorage.setItem('jabroni_admin_token', token)
+            sessionStorage.setItem('jabroni_admin_user_id', userId)
             setAdminToken(token)
+            setAdminUserId(userId)
           }}
         />
       )
@@ -126,9 +132,12 @@ export default function App() {
     return (
       <AdminDashboard
         token={adminToken}
+        currentUserId={adminUserId}
         onLogout={() => {
           sessionStorage.removeItem('jabroni_admin_token')
+          sessionStorage.removeItem('jabroni_admin_user_id')
           setAdminToken(null)
+          setAdminUserId(null)
         }}
       />
     )
