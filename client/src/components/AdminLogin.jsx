@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useIsMobile } from '../hooks/useIsMobile.js'
 
 export default function AdminLogin({ onLogin }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [status, setStatus] = useState('idle') // idle | loading | error
+  const [status, setStatus] = useState('idle')
+  const isMobile = useIsMobile()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -12,10 +14,8 @@ export default function AdminLogin({ onLogin }) {
       setError('Username and password are required.')
       return
     }
-
     setStatus('loading')
     setError('')
-
     try {
       const res = await fetch('/api/admin/login', {
         method: 'POST',
@@ -23,7 +23,6 @@ export default function AdminLogin({ onLogin }) {
         body: JSON.stringify({ username, password }),
       })
       const data = await res.json()
-
       if (res.ok && data.token) {
         onLogin({ token: data.token, userId: data.userId })
       } else {
@@ -38,6 +37,11 @@ export default function AdminLogin({ onLogin }) {
 
   const isLoading = status === 'loading'
 
+  const clearError = () => {
+    if (error) setError('')
+    if (status === 'error') setStatus('idle')
+  }
+
   const inputStyle = (hasError) => ({
     display: 'block',
     width: '100%',
@@ -48,16 +52,12 @@ export default function AdminLogin({ onLogin }) {
     fontFamily: 'var(--font-mono)',
     fontSize: '14px',
     letterSpacing: '1px',
-    padding: '14px 16px',
+    padding: '13px 16px',
     outline: 'none',
     transition: 'border-color 0.2s ease',
     opacity: isLoading ? 0.6 : 1,
+    WebkitAppearance: 'none',
   })
-
-  const clearError = () => {
-    if (error) setError('')
-    if (status === 'error') setStatus('idle')
-  }
 
   return (
     <div style={{
@@ -67,27 +67,28 @@ export default function AdminLogin({ onLogin }) {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '48px 24px',
+      padding: isMobile ? '24px 20px' : '48px 24px',
     }}>
       {/* Ambient glow */}
       <div style={{
         position: 'fixed',
-        top: '30%',
-        left: '50%',
+        top: '30%', left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '600px',
-        height: '400px',
+        width: '600px', height: '400px',
         background: 'radial-gradient(ellipse at center, rgba(201, 75, 26, 0.07) 0%, transparent 70%)',
-        pointerEvents: 'none',
-        zIndex: 0,
+        pointerEvents: 'none', zIndex: 0,
       }} />
 
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '400px' }}>
+      <div style={{
+        position: 'relative', zIndex: 1,
+        width: '100%',
+        maxWidth: isMobile ? '100%' : '400px',
+      }}>
         {/* Wordmark */}
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+        <div style={{ textAlign: 'center', marginBottom: isMobile ? '32px' : '48px' }}>
           <div style={{
             fontFamily: 'var(--font-playfair)',
-            fontSize: '2.8rem',
+            fontSize: isMobile ? '2.2rem' : '2.8rem',
             fontWeight: 900,
             color: 'var(--cream)',
             letterSpacing: '-0.5px',
@@ -126,11 +127,14 @@ export default function AdminLogin({ onLogin }) {
         </div>
 
         {/* Login card */}
-        <div style={{ background: 'var(--smoke)', border: '1px solid var(--char)', padding: '40px' }}>
+        <div style={{
+          background: 'var(--smoke)',
+          border: '1px solid var(--char)',
+          padding: isMobile ? '24px 20px' : '40px',
+        }}>
           <form onSubmit={handleSubmit} noValidate>
-
             {/* Username */}
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: '16px' }}>
               <label style={{
                 display: 'block',
                 fontFamily: 'var(--font-mono)',
@@ -147,17 +151,18 @@ export default function AdminLogin({ onLogin }) {
                 value={username}
                 onChange={(e) => { setUsername(e.target.value); clearError() }}
                 placeholder="username"
-                autoFocus
+                autoFocus={!isMobile}
                 autoComplete="username"
+                autoCapitalize="none"
                 disabled={isLoading}
                 style={inputStyle(!!error)}
                 onFocus={(e) => { if (!error) e.target.style.borderColor = 'var(--gold)' }}
-                onBlur={(e) => { if (!error) e.target.style.borderColor = 'var(--char)' }}
+                onBlur={(e)  => { if (!error) e.target.style.borderColor = 'var(--char)' }}
               />
             </div>
 
             {/* Password */}
-            <div style={{ marginBottom: '24px' }}>
+            <div style={{ marginBottom: '20px' }}>
               <label style={{
                 display: 'block',
                 fontFamily: 'var(--font-mono)',
@@ -178,7 +183,7 @@ export default function AdminLogin({ onLogin }) {
                 disabled={isLoading}
                 style={inputStyle(!!error)}
                 onFocus={(e) => { if (!error) e.target.style.borderColor = 'var(--gold)' }}
-                onBlur={(e) => { if (!error) e.target.style.borderColor = 'var(--char)' }}
+                onBlur={(e)  => { if (!error) e.target.style.borderColor = 'var(--char)' }}
               />
             </div>
 
@@ -188,7 +193,7 @@ export default function AdminLogin({ onLogin }) {
                 background: 'rgba(201, 75, 26, 0.08)',
                 border: '1px solid rgba(201, 75, 26, 0.4)',
                 padding: '10px 14px',
-                marginBottom: '20px',
+                marginBottom: '16px',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '11px',
                 letterSpacing: '0.5px',
@@ -211,9 +216,10 @@ export default function AdminLogin({ onLogin }) {
                 fontSize: '11px',
                 letterSpacing: '3px',
                 textTransform: 'uppercase',
-                padding: '16px',
+                padding: isMobile ? '18px' : '16px',
                 cursor: isLoading ? 'wait' : 'pointer',
                 transition: 'background 0.2s ease',
+                WebkitAppearance: 'none',
               }}
               onMouseEnter={(e) => { if (!isLoading) e.target.style.background = 'var(--ember-glow)' }}
               onMouseLeave={(e) => { if (!isLoading) e.target.style.background = 'var(--ember)' }}
@@ -225,7 +231,7 @@ export default function AdminLogin({ onLogin }) {
 
         <div style={{
           textAlign: 'center',
-          marginTop: '32px',
+          marginTop: '24px',
           fontFamily: 'var(--font-mono)',
           fontSize: '9px',
           letterSpacing: '2px',

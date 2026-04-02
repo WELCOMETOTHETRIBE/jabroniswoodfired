@@ -41,6 +41,22 @@ async function migrate() {
     `);
     console.log('✓ admin_sessions table ready');
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS inventory (
+        id         SERIAL PRIMARY KEY,
+        name       TEXT NOT NULL UNIQUE,
+        category   TEXT NOT NULL,
+        unit       TEXT NOT NULL,
+        quantity   DECIMAL(10,2) NOT NULL DEFAULT 0,
+        par_level  DECIMAL(10,2) NOT NULL DEFAULT 0,
+        notes      TEXT,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS idx_inventory_category ON inventory(category);
+    `);
+    console.log('✓ inventory table ready');
+
   } finally {
     client.release();
     await pool.end();

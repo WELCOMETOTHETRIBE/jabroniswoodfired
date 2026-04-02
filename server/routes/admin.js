@@ -222,4 +222,99 @@ router.delete('/users/:id', requireAdmin, async (req, res) => {
   }
 });
 
+// ─── GET /api/admin/inventory ─────────────────────────────────────────────────
+router.get('/inventory', requireAdmin, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT id, name, category, unit, quantity, par_level, notes, updated_at, created_at
+       FROM inventory ORDER BY category, name`
+    );
+    res.json({ inventory: rows });
+  } catch (err) {
+    console.error('Inventory fetch error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch inventory.' });
+  }
+});
+
+// ─── POST /api/admin/inventory ────────────────────────────────────────────────
+router.post('/inventory', requireAdmin, async (req, res) => {
+  const { name, category, unit, quantity, par_level, notes } = req.body;
+  if (!name || !category || !unit) {
+    return res.status(400).json({ error: 'Name, category, and unit are required.' });
+  }
+  try {
+    const { rows } = await pool.query(
+      `INSERT INTO inventory (name, category, unit, quantity, par_level, notes)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING id, name, category, unit, quantity, par_level, notes, updated_at, created_at`,
+      [name.trim(), category.trim(), unit.trim(), quantity || 0, par_level || 0, notes || null]
+    );
+    res.json({ item: rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: 'An item with that name already exists.' });
+    console.error('Create inventory error:', err.message);
+    res.status(500).json({ error: 'Failed to create inventory item.' });
+  }
+});
+
+// ─── PUT /api/admin/inventory/:id ─────────────────────────────────────────────
+router.put('/inventory/:id', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { name, category, unit, quantity, par_level, notes } = req.body;
+  if (!name || !category || !unit) {
+    return res.status(400).json({ error: 'Name, category, and unit are required.' });
+  }
+  try {
+    const { rows, rowCount } = await pool.query(
+      `UPDATE inventory
+       SET name = $1, category = $2, unit = $3, quantity = $4, par_level = $5, notes = $6, updated_at = NOW()
+       WHERE id = $7
+       RETURNING id, name, category, unit, quantity, par_level, notes, updated_at, created_at`,
+      [name.trim(), category.trim(), unit.trim(), quantity || 0, par_level || 0, notes || null, id]
+    );
+    if (!rowCount) return res.status(404).json({ error: 'Item not found.' });
+    res.json({ item: rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: 'An item with that name already exists.' });
+    console.error('Update inventory error:', err.message);
+    res.status(500).json({ error: 'Failed to update inventory item.' });
+  }
+});
+
+// ─── DELETE /api/admin/inventory/:id ──────────────────────────────────────────
+router.delete('/inventory/:id', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { rowCount } = await pool.query('DELETE FROM inventory WHERE id = $1', [id]);
+    if (!rowCount) return res.status(404).json({ error: 'Item not found.' });
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Delete inventory error:', err.message);
+    res.status(500).json({ error: 'Failed to delete inventory item.' });
+  }
+});
+
+// ─── POST /api/admin/inventory/:id/adjust ─────────────────────────────────────
+router.post('/inventory/:id/adjust', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { delta } = req.body;
+  if (delta === undefined || isNaN(Number(delta))) {
+    return res.status(400).json({ error: 'delta must be a number.' });
+  }
+  try {
+    const { rows, rowCount } = await pool.query(
+      `UPDATE inventory
+       SET quantity = GREATEST(0, quantity + $1), updated_at = NOW()
+       WHERE id = $2
+       RETURNING id, name, category, unit, quantity, par_level, notes, updated_at, created_at`,
+      [Number(delta), id]
+    );
+    if (!rowCount) return res.status(404).json({ error: 'Item not found.' });
+    res.json({ item: rows[0] });
+  } catch (err) {
+    console.error('Adjust inventory error:', err.message);
+    res.status(500).json({ error: 'Failed to adjust inventory.' });
+  }
+});
+
 module.exports = router;
