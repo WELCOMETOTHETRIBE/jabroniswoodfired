@@ -38,10 +38,11 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   overflow-x: hidden;
+  background-color: var(--smoke);
 }
 
 body {
-  background-color: var(--smoke);
+  background-color: transparent;
   color: var(--cream);
   font-family: var(--font-cormorant);
   font-weight: 400;
