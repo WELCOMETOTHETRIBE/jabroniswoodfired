@@ -1,18 +1,15 @@
 // ─── Jabroni's Wood Fired — Ember Glow Layer ─────────────────────────────────
-// Fixed canvas at z-index:9998, mix-blend-mode:screen.
-// Screen blend: black = transparent, glow colors add light on top of page.
+// mix-blend-mode:screen — black = invisible, glow adds light above page.
 
 function initEmber() {
-  const isMobile   = 'ontouchstart' in window;
-  const COUNT      = isMobile ? 40 : 80;
+  const isMobile = 'ontouchstart' in window;
+  const COUNT    = isMobile ? 12 : 22;
 
-  // ── Canvas ──────────────────────────────────────────────────────────────────
   const canvas = document.createElement('canvas');
   canvas.style.cssText = [
     'position:fixed', 'top:0', 'left:0',
     'width:100%', 'height:100%',
-    'z-index:9998',
-    'pointer-events:none',
+    'z-index:9998', 'pointer-events:none',
     'mix-blend-mode:screen',
   ].join(';');
   document.body.appendChild(canvas);
@@ -30,42 +27,53 @@ function initEmber() {
     }, 150);
   });
 
-  // ── Particles ────────────────────────────────────────────────────────────────
-  const COLORS = [
-    [255, 100, 20],
-    [255,  60,  0],
-    [220,  80, 10],
-    [255, 140, 40],
-  ];
+  // ── Ember factory ─────────────────────────────────────────────────────────
+  function makeEmber() {
+    // Weighted toward lower 2/3 of screen
+    const y = H * (0.25 + 0.75 * Math.pow(Math.random(), 0.7));
+    const x = W * (0.05 + 0.90 * Math.random());
 
-  const particles = Array.from({ length: COUNT }, () => spawnParticle(true));
+    // Each ember is 3–5 overlapping blobs at slight offsets
+    // This is what breaks the perfect-circle silhouette
+    const blobCount = 3 + (Math.random() * 2 | 0);
+    const blobs = Array.from({ length: blobCount }, () => ({
+      dx: (Math.random() - 0.5) * 8,   // offset from ember center
+      dy: (Math.random() - 0.5) * 6,
+      r:  6 + Math.random() * 14,       // each blob 6–20px radius
+    }));
 
-  function spawnParticle(anywhere) {
-    const col = COLORS[(Math.random() * COLORS.length) | 0];
-    // Weighted toward bottom half of screen
-    const yRand = Math.random();
-    const y = anywhere
-      ? H * (0.3 + 0.7 * Math.pow(Math.random(), 0.6))
-      : H * (0.5 + 0.5 * Math.pow(Math.random(), 0.5));
+    // Deep coal colors — no bright orange, these are aged embers
+    const palettes = [
+      [180, 40,  5],   // deep red coal
+      [160, 35,  0],   // burnt sienna
+      [200, 55, 10],   // slightly warmer
+      [140, 30,  5],   // almost dead coal
+    ];
+    const col = palettes[(Math.random() * palettes.length) | 0];
 
     return {
-      x:          Math.random() * W,
-      y:          y,
-      r:          col,
-      g:          col[1],
-      b:          col[2],
-      radius:     1.2 + Math.random() * 2.2,         // 1.2–3.4px
-      phase:      Math.random() * Math.PI * 2,        // pulse offset
-      pulseSpeed: 0.0008 + Math.random() * 0.0025,   // very slow flicker
-      driftX:     (Math.random() - 0.5) * 0.12,      // slow horizontal sway
-      driftY:     -(0.04 + Math.random() * 0.12),    // gentle upward rise
-      life:       0,
-      maxLife:    300 + Math.random() * 400,          // 5–12 sec at 60fps
+      x, y,
+      blobs,
       col,
+      // Each ember breathes independently at a very slow, irregular rate
+      phase:      Math.random() * Math.PI * 2,
+      pulseSpeed: 0.00035 + Math.random() * 0.0006,  // 30–90 second cycle feel
+      // Occasional deeper throb layered on top of base pulse
+      throbPhase: Math.random() * Math.PI * 2,
+      throbSpeed: 0.0009 + Math.random() * 0.0015,
+      // Lifespan
+      life:    0,
+      maxLife: 600 + Math.random() * 800,   // 10–23 sec at 60fps — patient
+      // Very slow horizontal drift, barely perceptible
+      driftX:  (Math.random() - 0.5) * 0.03,
     };
   }
 
-  // ── Loop ─────────────────────────────────────────────────────────────────────
+  const embers = Array.from({ length: COUNT }, makeEmber);
+  // Stagger life so they don't all fade in at once
+  for (const e of embers) e.life = Math.random() * e.maxLife * 0.7;
+
+  // ── Loop ─────────────────────────────────────────────────────────────────
   let last = performance.now();
 
   function loop(now) {
@@ -74,44 +82,51 @@ function initEmber() {
 
     ctx.clearRect(0, 0, W, H);
 
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      p.life += dt;
+    for (let i = 0; i < embers.length; i++) {
+      const e = embers[i];
+      e.life += dt;
 
-      if (p.life >= p.maxLife) {
-        particles[i] = spawnParticle(false);
+      if (e.life >= e.maxLife) {
+        embers[i] = makeEmber();
         continue;
       }
 
-      // Fade in first 60 frames, fade out last 60 frames
-      const t        = p.life / p.maxLife;
-      const fadeIn   = Math.min(p.life / 60, 1);
-      const fadeOut  = Math.min((p.maxLife - p.life) / 60, 1);
-      const envelope = fadeIn * fadeOut;
+      e.x += e.driftX * dt;
 
-      // Slow pulse/flicker
-      const pulse = 0.5 + 0.5 * Math.sin(now * p.pulseSpeed + p.phase);
-      const alpha = envelope * (0.3 + 0.6 * pulse);
-      if (alpha < 0.01) continue;
+      const t = e.life / e.maxLife;
+      // Smooth fade in / fade out envelope
+      const fadeIn  = Math.min(e.life / 90, 1);
+      const fadeOut = Math.min((e.maxLife - e.life) / 120, 1);
+      const env = fadeIn * fadeOut;
 
-      p.x += p.driftX * dt;
-      p.y += p.driftY * dt;
+      // Two-layer pulse: slow breath + occasional throb
+      const breath = 0.55 + 0.45 * Math.sin(now * e.pulseSpeed + e.phase);
+      const throb  = 0.80 + 0.20 * Math.sin(now * e.throbSpeed + e.throbPhase);
+      const intensity = env * breath * throb;
 
-      // Glow halo
-      const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 5);
-      glow.addColorStop(0,    `rgba(${p.col[0]},${p.col[1]},${p.col[2]},${(alpha * 0.9).toFixed(3)})`);
-      glow.addColorStop(0.35, `rgba(${p.col[0]},${p.col[1]},${p.col[2]},${(alpha * 0.35).toFixed(3)})`);
-      glow.addColorStop(1,    `rgba(${p.col[0]},${p.col[1]},${p.col[2]},0)`);
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius * 5, 0, Math.PI * 2);
-      ctx.fillStyle = glow;
-      ctx.fill();
+      if (intensity < 0.01) continue;
 
-      // Hot core
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,220,180,${Math.min(alpha * 1.2, 1).toFixed(3)})`;
-      ctx.fill();
+      const [r, g, b] = e.col;
+
+      // Draw each blob — irregular offsets = organic coal shape
+      for (const blob of e.blobs) {
+        const bx = e.x + blob.dx;
+        const by = e.y + blob.dy;
+
+        const grad = ctx.createRadialGradient(bx, by, 0, bx, by, blob.r);
+        // Center: warm amber-white hot spot
+        grad.addColorStop(0,    `rgba(${Math.min(r+60,255)},${Math.min(g+30,120)},${b},${(intensity * 0.55).toFixed(3)})`);
+        // Mid: the coal's true color
+        grad.addColorStop(0.4,  `rgba(${r},${g},${b},${(intensity * 0.28).toFixed(3)})`);
+        // Edge: deep red bleed, very faint
+        grad.addColorStop(0.75, `rgba(${Math.max(r-30,80)},${Math.max(g-20,0)},0,${(intensity * 0.08).toFixed(3)})`);
+        grad.addColorStop(1,    'rgba(0,0,0,0)');
+
+        ctx.beginPath();
+        ctx.arc(bx, by, blob.r, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
     }
 
     requestAnimationFrame(loop);
