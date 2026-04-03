@@ -46,13 +46,13 @@ class Particle {
   }
 
   reset(x, y) {
-    this.x  = x + (Math.random() - 0.5) * 16;
-    this.y  = y + (Math.random() - 0.5) * 16;
-    this.vx = (Math.random() - 0.5) * 0.6;
-    this.vy = -(0.4 + Math.random() * 0.4);
+    this.x  = x + (Math.random() - 0.5) * 10;
+    this.y  = y + (Math.random() - 0.5) * 10;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = -(0.2 + Math.random() * 0.25);
     this.age      = 0;
-    this.lifetime = (90 + Math.random() * 50) | 0;
-    this.maxRadius = 14 + Math.random() * 14;  // 14–28px at peak
+    this.lifetime = (80 + Math.random() * 40) | 0;
+    this.maxRadius = 10 + Math.random() * 10;  // 10–20px at peak
     this.color    = SMOKE_COLORS[Math.random() * 3 | 0];
     // unique noise-space seed so every particle follows a distinct path
     this.nx = Math.random() * 200;
@@ -71,11 +71,11 @@ class Particle {
     if (this.age >= this.lifetime) { this.dead = true; return; }
 
     const t = this.age * 0.018;
-    this.vx += noise2D(this.nx + t, this.ny      ) * 0.09;
-    this.vy += noise2D(this.nx,     this.ny + t  ) * 0.06;
+    this.vx += noise2D(this.nx + t, this.ny      ) * 0.04;
+    this.vy += noise2D(this.nx,     this.ny + t  ) * 0.03;
 
-    this.vx *= 0.975;
-    this.vy *= 0.982;
+    this.vx *= 0.96;
+    this.vy *= 0.965;
 
     this.x += this.vx;
     this.y += this.vy;
