@@ -42,7 +42,7 @@ const SMOKE_COLORS = ['210,200,190', '180,175,170', '230,220,205'];
 
 class Particle {
   constructor() {
-    this.dead = true; // start inactive; reset() activates
+    this.dead = true;
   }
 
   reset(x, y) {
@@ -52,11 +52,16 @@ class Particle {
     this.vy = -(0.4 + Math.random() * 0.4);
     this.age      = 0;
     this.lifetime = (90 + Math.random() * 50) | 0;
-    this.maxRadius = 14 + Math.random() * 14;   // 14–28px at peak
+    this.maxRadius = 14 + Math.random() * 14;  // 14–28px at peak
     this.color    = SMOKE_COLORS[Math.random() * 3 | 0];
-    // unique noise-space offset so every particle follows a distinct path
+    // unique noise-space seed so every particle follows a distinct path
     this.nx = Math.random() * 200;
     this.ny = Math.random() * 200;
+    // slow spin — breaks rotational symmetry so it never reads as a circle
+    this.spin = (Math.random() - 0.5) * 0.04;
+    this.angle = Math.random() * Math.PI * 2;
+    // aspect ratio 0.55–0.80: particles are always elongated, never round
+    this.aspect = 0.55 + Math.random() * 0.25;
     this.dead = false;
   }
 
@@ -65,49 +70,62 @@ class Particle {
     this.age++;
     if (this.age >= this.lifetime) { this.dead = true; return; }
 
-    // Perlin-driven turbulence — writhes, doesn't drift linearly
     const t = this.age * 0.018;
     this.vx += noise2D(this.nx + t, this.ny      ) * 0.09;
     this.vy += noise2D(this.nx,     this.ny + t  ) * 0.06;
 
-    // Gentle drag so velocity stays believable
     this.vx *= 0.975;
     this.vy *= 0.982;
 
     this.x += this.vx;
     this.y += this.vy;
+
+    // rotate slowly — each frame is a different cross-section of the wisp
+    this.angle += this.spin;
   }
 
   draw(ctx) {
     if (this.dead) return;
     const progress = this.age / this.lifetime;
-    const radius   = this.maxRadius * Math.pow(progress, 0.6);
-    if (radius < 0.5) return;
+    const rA = this.maxRadius * Math.pow(progress, 0.6);   // major axis
+    if (rA < 0.5) return;
+    const rB = rA * this.aspect;                           // minor axis
 
-    // Opacity arc: rises then falls; never chalky
-    const alpha = Math.sin(Math.PI * progress) * 0.18;
+    // Opacity arc: fade in → hold → fade out
+    const alpha = Math.sin(Math.PI * progress) * 0.20;
     if (alpha < 0.004) return;
 
     ctx.save();
-    ctx.filter = 'blur(6px)';
+
+    // ── Transform: translate → rotate → stretch into ellipse ──────────────
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    ctx.scale(1, rB / rA);   // squash Y so the circle becomes an ellipse
+
+    // ── Radial gradient — natural gaussian falloff, no hard bokeh ring ────
+    // Gradient is in local (post-transform) space, so it fills the ellipse
+    const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, rA);
+    grad.addColorStop(0,    `rgba(${this.color},${(alpha).toFixed(3)})`);
+    grad.addColorStop(0.45, `rgba(${this.color},${(alpha * 0.55).toFixed(3)})`);
+    grad.addColorStop(1,    `rgba(${this.color},0)`);
+
     ctx.beginPath();
-    ctx.arc(this.x, this.y, radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${this.color},${alpha.toFixed(3)})`;
+    ctx.arc(0, 0, rA, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
     ctx.fill();
+
     ctx.restore();
   }
 }
 
 // ─── Engine ───────────────────────────────────────────────────────────────────
 function initSmoke() {
-  const isMobile   = 'ontouchstart' in window;
-  const MAX_POOL   = isMobile ? 250 : 400;
+  const isMobile = 'ontouchstart' in window;
+  const MAX_POOL = isMobile ? 250 : 400;
 
-  // Pre-allocate the entire pool
-  const pool       = Array.from({ length: MAX_POOL }, () => new Particle());
-  let   recycleIdx = 0; // ring pointer for oldest-first recycling
+  const pool = Array.from({ length: MAX_POOL }, () => new Particle());
+  let recycleIdx = 0;
 
-  // Canvas
   const canvas = document.createElement('canvas');
   canvas.style.cssText = 'position:fixed;top:0;left:0;z-index:9999;pointer-events:none;';
   document.body.insertBefore(canvas, document.body.firstChild);
@@ -128,17 +146,12 @@ function initSmoke() {
   // ── Emission ────────────────────────────────────────────────────────────────
   function emit(x, y, count) {
     for (let i = 0; i < count; i++) {
-      // Prefer a slot that's already dead
       let slot = null;
       for (let attempt = 0; attempt < 8; attempt++) {
         const candidate = pool[(recycleIdx + attempt) % MAX_POOL];
         if (candidate.dead) { slot = candidate; recycleIdx = (recycleIdx + attempt + 1) % MAX_POOL; break; }
       }
-      // Fall back to oldest via ring pointer
-      if (!slot) {
-        slot = pool[recycleIdx];
-        recycleIdx = (recycleIdx + 1) % MAX_POOL;
-      }
+      if (!slot) { slot = pool[recycleIdx]; recycleIdx = (recycleIdx + 1) % MAX_POOL; }
       slot.reset(x, y);
     }
   }
@@ -196,7 +209,6 @@ function initSmoke() {
   loop();
 }
 
-// Boot after DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initSmoke);
 } else {
