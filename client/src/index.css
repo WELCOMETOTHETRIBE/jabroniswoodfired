@@ -3,6 +3,18 @@
    Old World Fire. New World Smoke.
    ============================================================ */
 
+/* Tailwind 3.4 directives. Sprint 2 LP2 turns Tailwind on for the homepage
+   layout primitives. Component-scoped responsive utilities (grid columns,
+   container padding, breakpoint flex/grid switches) now live in className
+   strings rather than per-component <style> blocks. The brand tokens, the
+   `.btn` family, the `.eyebrow`, `.fire-rule`, `.form-input`, scroll-reveal,
+   reduced-motion guard, and the persona-tab strip / sticky-mobile-CTA
+   primitives stay in this file as global utilities. See tailwind.config.js
+   for the canonical breakpoint set. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   /* Brand Colors */
   --ember: #C94B1A;

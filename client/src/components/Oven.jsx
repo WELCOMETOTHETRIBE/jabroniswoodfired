@@ -233,12 +233,16 @@ export default function Oven() {
   }
 
   return (
-    <section id="oven" ref={sectionRef} style={{
-      background: 'var(--curtain)',
-      borderTop: '1px solid var(--char)',
-      padding: '120px 0',
-    }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 48px' }}>
+    <section
+      id="oven"
+      ref={sectionRef}
+      className="py-20 md:py-[120px]"
+      style={{
+        background: 'var(--curtain)',
+        borderTop: '1px solid var(--char)',
+      }}
+    >
+      <div className="mx-auto max-w-page px-6 md:px-12">
 
         <SectionHeader
           kicker={{ left: 'The Oven', right: 'Commission' }}
@@ -248,13 +252,8 @@ export default function Oven() {
           body="A wood-fired oven is a living thing. It breathes. It holds heat in the brick long after the fire dies down. Fueled by olive wood and built with hand-laid firebrick the way southern Italian masons have done for centuries, each oven we commission carries a lineage that predates every kitchen appliance you've ever owned. Static builds for estates and restaurants. Mobile rigs that come to you."
         />
 
-        {/* Two-column layout */}
-        <div className="oven-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '64px',
-          alignItems: 'start',
-        }}>
+        {/* Two-column layout — stacks below md (gap also tightens). */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-start">
           {/* LEFT: Gallery — typographic compositions stand in for photos
               until real photography lands. The slots are sized to match
               the eventual photo crops so the swap-in is a no-op. */}
@@ -447,16 +446,6 @@ export default function Oven() {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 860px) {
-          #oven { padding: 80px 0 !important; }
-          #oven > div { padding: 0 24px !important; }
-          #oven .oven-grid {
-            grid-template-columns: 1fr !important;
-            gap: 48px !important;
-          }
-        }
-      `}</style>
     </section>
   )
 }

@@ -132,24 +132,23 @@ export default function Booking({ initialInquiryType = '' }) {
   }
 
   return (
-    <section id="booking" ref={sectionRef} style={{
-      background: 'var(--smoke)',
-      borderTop: '2px solid var(--ember)',
-      padding: '120px 0',
-    }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 48px' }}>
+    <section
+      id="booking"
+      ref={sectionRef}
+      className="py-20 md:py-[120px]"
+      style={{
+        background: 'var(--smoke)',
+        borderTop: '2px solid var(--ember)',
+      }}
+    >
+      <div className="mx-auto max-w-page-narrow px-6 md:px-12">
 
         <SectionHeader
           kicker={{ left: 'Book', right: 'Inquire' }}
           bottomMargin="48px"
         />
 
-        <div className="booking-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1.6fr',
-          gap: '80px',
-          alignItems: 'start',
-        }}>
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1.6fr] gap-12 md:gap-20 items-start">
           {/* LEFT: Copy */}
           <div>
             <span className="eyebrow reveal" style={{ marginBottom: '12px', display: 'block' }}>
@@ -272,7 +271,7 @@ export default function Booking({ initialInquiryType = '' }) {
             ) : (
               <form onSubmit={handleSubmit} noValidate>
                 {/* Name row */}
-                <div className="form-row-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                   <FormField
                     label="First Name"
                     name="firstName"
@@ -294,7 +293,7 @@ export default function Booking({ initialInquiryType = '' }) {
                 </div>
 
                 {/* Email + Phone row */}
-                <div className="form-row-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                   <FormField
                     label="Email"
                     name="email"
@@ -339,7 +338,7 @@ export default function Booking({ initialInquiryType = '' }) {
                 </div>
 
                 {/* Guest count + Date/Location */}
-                <div className="form-row-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '12px', marginBottom: '12px' }}>
+                <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-3 mb-3">
                   <FormField
                     label="Guest Count"
                     name="guests"
@@ -426,20 +425,6 @@ export default function Booking({ initialInquiryType = '' }) {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 860px) {
-          #booking { padding: 80px 0 !important; }
-          #booking > div { padding: 0 24px !important; }
-          #booking .booking-grid {
-            grid-template-columns: 1fr !important;
-            gap: 48px !important;
-          }
-          #booking .form-row-2col,
-          #booking .form-row-3col {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </section>
   )
 }

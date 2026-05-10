@@ -82,19 +82,11 @@ export default function Hero({ onSelectPersona }) {
         pointerEvents: 'none',
       }} />
 
-      {/* Two-column layout */}
-      <div className="hero-grid" style={{
-        position: 'relative',
-        zIndex: 3,
-        maxWidth: '1280px',
-        margin: '0 auto',
-        padding: '120px 48px 100px',
-        width: '100%',
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '64px',
-        alignItems: 'center',
-      }}>
+      {/* Two-column layout. On md (≥860px) the copy and logo render side
+          by side; below, the logo moves above the copy (CSS `order`). */}
+      <div
+        className="relative z-[3] w-full mx-auto max-w-page grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center px-5 xs:px-6 md:px-12 pt-[90px] xs:pt-[100px] md:pt-[120px] pb-[60px] xs:pb-[80px] md:pb-[100px]"
+      >
 
         {/* LEFT — copy */}
         <div>
@@ -148,16 +140,23 @@ export default function Hero({ onSelectPersona }) {
             Block Parties · Graduations · Small Weddings
           </div>
 
-          {/* Headline */}
-          <h1 style={{
-            fontFamily: 'var(--font-playfair)',
-            fontWeight: 900,
-            fontSize: 'clamp(2.8rem, 5.5vw, 6.5rem)',
-            lineHeight: 1.0,
-            color: 'var(--cream)',
-            marginBottom: '40px',
-            letterSpacing: '-1px',
-          }}>
+          {/* Headline. Two-stage responsive sizing replaces the previous
+              three layered @media-overridden clamps:
+                <md (mobile/tablet) : clamp(2.4rem, 10vw, 4rem)
+                ≥md (desktop)       : clamp(2.8rem, 5.5vw, 6.5rem)
+              At 320px → 38.4px; at 414px → 41.4px; at 860px+ → up to 6.5rem.
+              Matches the legacy rhythm without the @media block. */}
+          <h1
+            className="text-[clamp(2.4rem,10vw,4rem)] md:text-[clamp(2.8rem,5.5vw,6.5rem)]"
+            style={{
+              fontFamily: 'var(--font-playfair)',
+              fontWeight: 900,
+              lineHeight: 1.0,
+              color: 'var(--cream)',
+              marginBottom: '40px',
+              letterSpacing: '-1px',
+            }}
+          >
             Your Event.{' '}
             <em style={{ color: 'var(--ember-glow)', fontStyle: 'italic' }}>Real Fire.</em>
           </h1>
@@ -251,14 +250,8 @@ export default function Hero({ onSelectPersona }) {
           </div>
         </div>
 
-        {/* RIGHT — logo */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-        }}>
+        {/* RIGHT — logo. Below md it moves above the copy via order:-1. */}
+        <div className="relative flex flex-col items-center justify-center order-first md:order-none">
           {/* Ember bloom behind the logo */}
           <div style={{
             position: 'absolute',
@@ -271,47 +264,12 @@ export default function Hero({ onSelectPersona }) {
           <img
             src="/images/jabroni-logo-transparent.png"
             alt="Jabroni's Wood Fired"
-            style={{
-              width: '100%',
-              maxWidth: '480px',
-              height: 'auto',
-              display: 'block',
-              position: 'relative',
-              zIndex: 1,
-            }}
+            className="block relative z-[1] w-full max-w-[260px] md:max-w-[480px] h-auto"
           />
 
         </div>
 
       </div>
-
-      <style>{`
-        @media (max-width: 860px) {
-          #hero .hero-grid {
-            grid-template-columns: 1fr !important;
-            padding: 100px 24px 80px !important;
-            gap: 40px !important;
-          }
-          #hero .hero-grid h1 {
-            font-size: clamp(2.4rem, 10vw, 4rem) !important;
-          }
-          /* On mobile, logo goes above the text */
-          #hero .hero-grid > div:last-child {
-            order: -1;
-          }
-          #hero .hero-grid > div:last-child img {
-            max-width: 260px !important;
-          }
-        }
-        @media (max-width: 480px) {
-          #hero .hero-grid {
-            padding: 90px 20px 60px !important;
-          }
-          #hero .hero-grid h1 {
-            font-size: clamp(2rem, 12vw, 3rem) !important;
-          }
-        }
-      `}</style>
     </section>
   )
 }

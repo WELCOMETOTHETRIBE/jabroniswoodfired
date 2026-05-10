@@ -29,21 +29,17 @@ export default function Footer() {
   }
 
   return (
-    <footer style={{
-      background: 'var(--stage)',
-      borderTop: '1px solid var(--char)',
-      padding: '80px 0 40px',
-    }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 48px' }}>
+    <footer
+      className="pt-20 pb-10"
+      style={{
+        background: 'var(--stage)',
+        borderTop: '1px solid var(--char)',
+      }}
+    >
+      <div className="mx-auto max-w-page px-6 md:px-12">
 
-        {/* Top row */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr auto',
-          gap: '48px',
-          marginBottom: '64px',
-          alignItems: 'start',
-        }}>
+        {/* Top row — stacks below md */}
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-12 mb-16 items-start">
           {/* Logo + tagline */}
           <div>
             <img
@@ -96,7 +92,10 @@ export default function Footer() {
               ~14px tall with 14px gap; the new min-height absorbs that
               into a single hit area. */}
           <nav>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-end' }}>
+            <ul
+              className="flex flex-col gap-1 items-start md:items-end"
+              style={{ listStyle: 'none', padding: 0 }}
+            >
               {navLinks.map(link => (
                 <li key={link.href}>
                   <a
@@ -163,19 +162,6 @@ export default function Footer() {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 860px) {
-          footer [style*="gridTemplateColumns: '1fr auto'"] {
-            grid-template-columns: 1fr !important;
-          }
-          footer nav ul {
-            align-items: flex-start !important;
-          }
-          footer [style*="padding: '0 48px'"] {
-            padding: 0 24px !important;
-          }
-        }
-      `}</style>
     </footer>
   )
 }

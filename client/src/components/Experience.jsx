@@ -127,11 +127,9 @@ export default function Experience() {
         pointerEvents: 'none', zIndex: 0,
       }} />
 
-      <div style={{
-        position: 'relative', zIndex: 2,
-        maxWidth: '1100px', margin: '0 auto',
-        padding: '0 48px', textAlign: 'center',
-      }}>
+      <div
+        className="relative z-[2] mx-auto max-w-page-narrow text-center px-6 md:px-12"
+      >
 
         {/* Section divider */}
         <div className="fire-rule reveal" style={{ marginBottom: '64px', justifyContent: 'center' }}>
@@ -235,13 +233,14 @@ export default function Experience() {
           <span>The Cast</span>
         </div>
 
-        {/* Cast grid — 5 members */}
-        <div className="reveal" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(5, 1fr)',
-          gap: '2px',
-          marginBottom: '80px',
-        }}>
+        {/* Cast grid — 5 members. Mobile-first responsive ladder:
+              <480px : 1 col
+              480-859 : 2 cols
+              860-1023 : 3 cols
+              ≥1024 : 5 cols
+            Replaces three @media blocks that targeted brittle inline-style
+            substring selectors. */}
+        <div className="reveal grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-[2px] mb-20">
           {cast.map((member, i) => {
             const isMid = i === 2
             const isHovered = hoveredIndex === i
@@ -469,6 +468,11 @@ export default function Experience() {
         </div>
       </div>
 
+      {/* Tooltip transition states are JS-driven (hover index) and use a
+          CSS variable for x-axis anchoring. Kept as a scoped <style> block
+          because it cannot be expressed as static Tailwind utilities.
+          Hidden below md (touch devices) — the cards still render the
+          static description copy directly. */}
       <style>{`
         .cast-tooltip {
           opacity: 0;
@@ -494,27 +498,6 @@ export default function Experience() {
         }
         @media (max-width: 860px) {
           .cast-tooltip { display: none !important; }
-        }
-        @media (max-width: 1024px) {
-          #experience [style*="repeat(5, 1fr)"] {
-            grid-template-columns: repeat(3, 1fr) !important;
-          }
-        }
-        @media (max-width: 860px) {
-          #experience [style*="repeat(5, 1fr)"],
-          #experience [style*="repeat(3, 1fr)"] {
-            grid-template-columns: 1fr 1fr !important;
-          }
-          #experience [style*="padding: '0 48px'"] {
-            padding: 0 24px !important;
-          }
-        }
-        @media (max-width: 480px) {
-          #experience [style*="repeat(5, 1fr)"],
-          #experience [style*="repeat(3, 1fr)"],
-          #experience [style*="1fr 1fr"] {
-            grid-template-columns: 1fr !important;
-          }
         }
       `}</style>
     </section>

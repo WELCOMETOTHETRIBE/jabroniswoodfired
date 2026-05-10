@@ -119,8 +119,8 @@ export default function Nav({ persona = 'catering', onSelectPersona }) {
 
         {/* Desktop right side — single persona-aware CTA. Locked at
             14px / weight 700 so cream-on-ember (4.07:1) clears WCAG
-            large-text 3:1. */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }} className="desktop-nav">
+            large-text 3:1. Hidden below md (mobile uses the hamburger). */}
+        <div className="hidden md:flex items-center gap-6">
           <a
             href="#booking"
             onClick={handleCtaClick}
@@ -131,13 +131,11 @@ export default function Nav({ persona = 'catering', onSelectPersona }) {
           </a>
         </div>
 
-        {/* Mobile hamburger. 44×44 hit target — verifier flagged 40×29
-            previously. The visual stack of three lines stays the same;
-            we just give the button enough padding to be a real touch
-            target. */}
+        {/* Mobile hamburger. 44×44 hit target. Hidden at md+ where the
+            desktop CTA covers the same surface. */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="mobile-menu-btn"
+          className="flex md:hidden flex-col justify-center items-center gap-[5px]"
           style={{
             background: 'none',
             border: 'none',
@@ -145,11 +143,6 @@ export default function Nav({ persona = 'catering', onSelectPersona }) {
             padding: '12px',
             minHeight: '44px',
             minWidth: '44px',
-            display: 'none',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '5px',
           }}
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
@@ -275,12 +268,6 @@ export default function Nav({ persona = 'catering', onSelectPersona }) {
         </div>
       )}
 
-      <style>{`
-        @media (max-width: 860px) {
-          .desktop-nav { display: none !important; }
-          .mobile-menu-btn { display: flex !important; }
-        }
-      `}</style>
     </nav>
   )
 }

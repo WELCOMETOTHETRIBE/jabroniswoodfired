@@ -85,13 +85,8 @@ export default function PersonaTabs({ active, onChange }) {
         role="tablist"
         aria-label="Choose your path"
         onKeyDown={handleKeyDown}
+        className="mx-auto max-w-page flex gap-0 overflow-x-auto px-4 sm:px-8"
         style={{
-          maxWidth: '1280px',
-          margin: '0 auto',
-          padding: '0 32px',
-          display: 'flex',
-          gap: '0',
-          overflowX: 'auto',
           WebkitOverflowScrolling: 'touch',
           scrollbarWidth: 'none',
         }}
@@ -108,50 +103,34 @@ export default function PersonaTabs({ active, onChange }) {
               aria-controls={`persona-panel-${persona.id}`}
               tabIndex={isActive ? 0 : -1}
               onClick={() => onChange(persona.id)}
+              /* Responsive padding/gap: tighter below sm, wider above.
+                 11px text + 1.5px tracking on mobile vs 11px + 2px on desktop. */
+              className="flex items-center whitespace-nowrap shrink-0 cursor-pointer uppercase text-[11px] tracking-[1.5px] sm:tracking-[2px] gap-2 sm:gap-3 px-[14px] py-[14px] sm:px-5 sm:py-4 transition-[color,border-color,opacity] duration-200"
               style={{
                 background: 'none',
                 border: 'none',
                 borderBottom: isActive ? '2px solid var(--ember)' : '2px solid transparent',
                 marginBottom: '-1px',
-                padding: '16px 20px',
-                minHeight: '48px', // touch target ≥ 44px
-                cursor: 'pointer',
+                minHeight: '48px',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
                 color: isActive ? 'var(--ember-glow)' : 'var(--bone)',
                 opacity: isActive ? 1 : 0.7,
-                transition: 'color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                whiteSpace: 'nowrap',
-                flexShrink: 0,
               }}
             >
               <span>{persona.label}</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span className="flex items-center gap-1.5">
                 {persona.statusTone === 'live' && (
                   <span
                     aria-hidden="true"
-                    style={{
-                      display: 'inline-block',
-                      width: '6px',
-                      height: '6px',
-                      borderRadius: '50%',
-                      background: STATUS_COLOR.live,
-                      flexShrink: 0,
-                    }}
+                    className="inline-block w-1.5 h-1.5 rounded-full shrink-0"
+                    style={{ background: STATUS_COLOR.live }}
                   />
                 )}
                 <span
+                  className="text-[9px] sm:text-[10px] tracking-[1px] sm:tracking-[1.5px] uppercase"
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '10px', /* up from 9px — keeps the small-text AA threshold safely cleared */
-                    letterSpacing: '1.5px',
                     color: STATUS_COLOR[persona.statusTone],
-                    textTransform: 'uppercase',
                     opacity: isActive ? 1 : 0.9,
                   }}
                 >
@@ -162,24 +141,10 @@ export default function PersonaTabs({ active, onChange }) {
           )
         })}
       </div>
+      {/* Scrollbar-hide is the only thing that has to live in CSS — Tailwind
+          doesn't ship a `scrollbar-none` utility out of the box. */}
       <style>{`
         .persona-tab-strip [role="tablist"]::-webkit-scrollbar { display: none; }
-        @media (max-width: 640px) {
-          .persona-tab-strip [role="tablist"] { padding: 0 16px !important; }
-          .persona-tab-strip [role="tab"] {
-            padding: 14px 14px !important;
-            min-height: 48px !important; /* touch target */
-            font-size: 11px !important; /* up from 10px so eyebrow contrast clears AA */
-            letter-spacing: 1.5px !important;
-            gap: 8px !important;
-          }
-          .persona-tab-strip [role="tab"] span:last-child {
-            /* status pill — kept small but uses gold/bone/muted on stage at >= 4.5:1
-               for those tones. Bumped from 8px to 9px to be safe at small widths. */
-            font-size: 9px !important;
-            letter-spacing: 1px !important;
-          }
-        }
       `}</style>
     </div>
   )

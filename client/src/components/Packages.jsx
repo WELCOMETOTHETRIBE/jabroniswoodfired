@@ -346,11 +346,13 @@ export default function Packages() {
   const tabIsLive = TABS.find(t => t.id === activeTab)?.live ?? false
 
   return (
-    <section id="packages" ref={sectionRef} style={{
-      background: 'var(--smoke)',
-      padding: '120px 0',
-    }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 48px' }}>
+    <section
+      id="packages"
+      ref={sectionRef}
+      className="py-20 md:py-[120px]"
+      style={{ background: 'var(--smoke)' }}
+    >
+      <div className="mx-auto max-w-page px-6 md:px-12">
 
         <SectionHeader
           kicker={{ left: 'Catering', right: 'Live Fire' }}
@@ -360,38 +362,31 @@ export default function Packages() {
           body="Fire is the oldest communal act there is. Long before restaurants, long before kitchens, people gathered around it — cooked over it, fed each other from it, and called that a meal. We haven't improved on that tradition. We've spent ninety years getting exceptionally good at it."
         />
 
-        {/* Tabs */}
-        <div className="reveal reveal-delay-3 packages-tab-strip" style={{
-          display: 'flex',
-          gap: '2px',
-          marginBottom: '48px',
-          flexWrap: 'wrap',
-          borderBottom: '1px solid var(--char)',
-        }}>
+        {/* Tabs. The wrapper used to use `gap: 2px` desktop and override to
+            `gap: 0` at md-down via @media; we collapse that to a single
+            `md:gap-[2px]` since the Tailwind utility supplies the responsive
+            switch directly. */}
+        <div
+          className="reveal reveal-delay-3 packages-tab-strip flex flex-wrap gap-0 md:gap-[2px] mb-12"
+          style={{ borderBottom: '1px solid var(--char)' }}
+        >
           {TABS.map(tab => (
             <button
               key={tab.id}
-              className="packages-tab"
               onClick={() => setActiveTab(tab.id)}
+              /* Padding + font-size scale up at xs (480px+). Touch target
+                 stays >=44px. Other styling (active border, color) lives
+                 inline because it depends on activeTab state. */
+              className="flex items-center gap-2 whitespace-nowrap px-4 py-3 xs:px-6 xs:py-3.5 text-[10px] xs:text-[11px] uppercase tracking-[2px] cursor-pointer transition-[color,border-color,opacity] duration-200"
               style={{
                 background: 'none',
                 border: 'none',
                 borderBottom: activeTab === tab.id ? '2px solid var(--ember)' : '2px solid transparent',
                 marginBottom: '-1px',
-                padding: '14px 24px',
                 minHeight: '44px', /* touch target */
-                cursor: 'pointer',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
                 color: activeTab === tab.id ? 'var(--ember-glow)' : 'var(--bone)',
-                opacity: activeTab === tab.id ? 1 : 0.7, /* up from 0.55 — bone @ 0.55 fails AA */
-                transition: 'color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                whiteSpace: 'nowrap',
+                opacity: activeTab === tab.id ? 1 : 0.7,
               }}
               onMouseEnter={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.95'; e.currentTarget.style.color = 'var(--bone)' } }}
               onMouseLeave={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.7'; e.currentTarget.style.color = 'var(--bone)' } }}
@@ -424,16 +419,20 @@ export default function Packages() {
           ))}
         </div>
 
-        {/* Package cards. The class hook (`packages-tier-grid`) is the
-            mobile collapse target — substring selectors on the React
-            inline-style attribute do not match because React serializes
-            inline styles to kebab-case in the DOM, which broke the
-            previous `[style*="gridTemplateColumns"]` rule. */}
-        <div className="packages-tier-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${Math.min(packages.length, 3)}, 1fr)`,
-          gap: '2px',
-        }}>
+        {/* Package cards. Mobile-first responsive grid:
+              <480px : 1 column (the verifier's 320px regression fix)
+              480–859px : 2 columns
+              ≥860px : up-to-3 columns based on data length
+            We intentionally do NOT use `grid-cols-3` blanket on md — Santa
+            Maria has 2 cards, so we still cap at the data length on desktop
+            via an inline override. */}
+        <div
+          className={`grid grid-cols-1 xs:grid-cols-2 gap-[2px] ${
+            packages.length === 1 ? 'md:grid-cols-1' :
+            packages.length === 2 ? 'md:grid-cols-2' :
+            'md:grid-cols-3'
+          }`}
+        >
           {packages.map((pkg, i) => (
             <PackageCard
               key={`${activeTab}-${i}`}
@@ -459,31 +458,6 @@ export default function Packages() {
         </p>
       </div>
 
-      <style>{`
-        /* Tablet: 3 → 2 column. Note we do NOT also collapse to 1 here;
-           that happens at 480px below. */
-        @media (max-width: 860px) {
-          #packages > div { padding: 80px 24px !important; }
-          .packages-tier-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-          .packages-tab-strip { gap: 0 !important; }
-        }
-        /* Mobile: collapse to single column.
-           The verifier reported card body text squeezed to 1–3 character
-           columns at 320px — collapsing to 1fr at 480px gives every card
-           full viewport width so bullet wrapping breathes. */
-        @media (max-width: 480px) {
-          .packages-tier-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .packages-tab {
-            padding: 12px 16px !important;
-            font-size: 10px !important;
-            min-height: 44px !important;
-          }
-        }
-      `}</style>
     </section>
   )
 }

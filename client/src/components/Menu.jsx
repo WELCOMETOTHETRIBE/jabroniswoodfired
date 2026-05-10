@@ -186,11 +186,13 @@ export default function Menu() {
   }, [])
 
   return (
-    <section id="menu" ref={sectionRef} style={{
-      background: 'var(--ash)',
-      padding: '120px 0',
-    }}>
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 48px' }}>
+    <section
+      id="menu"
+      ref={sectionRef}
+      className="py-20 md:py-[120px]"
+      style={{ background: 'var(--ash)' }}
+    >
+      <div className="mx-auto max-w-page px-6 md:px-12">
 
         <SectionHeader
           kicker={{ left: 'The Menu', right: 'The Menu' }}
@@ -200,15 +202,15 @@ export default function Menu() {
           body="Everything on this menu exists because of the fire. The brisket smokes for twelve hours over hickory. The pizza blisters in ninety seconds against live oak flame. The olive wood gives a sweetness that no oven, no broiler, no gas burner has ever replicated. This is the menu the fire makes possible."
         />
 
-        {/* Tabs */}
-        <div className="reveal reveal-delay-3 menu-tabs" style={{
-          display: 'flex',
-          gap: '2px',
-          marginBottom: '56px',
-          borderBottom: '1px solid var(--char)',
-          overflowX: 'auto',
-          WebkitOverflowScrolling: 'touch',
-        }}>
+        {/* Tabs. Horizontally scrollable on narrow widths so the three
+            options never wrap into multiple lines. */}
+        <div
+          className="reveal reveal-delay-3 flex gap-0 md:gap-[2px] mb-14 overflow-x-auto"
+          style={{
+            borderBottom: '1px solid var(--char)',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
           {TABS.map(tab => (
             <button
               key={tab.id}
@@ -239,13 +241,9 @@ export default function Menu() {
           ))}
         </div>
 
-        {/* MAINS & SIDES */}
+        {/* MAINS & SIDES — 3 cols on lg+, 2 cols on md, 1 col below md */}
         {activeTab === 'mains' && (
-          <div className="menu-mains-grid" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '2px',
-          }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[2px]">
             {MAINS.map((col) => (
               <div key={col.section} style={{
                 background: 'rgba(15, 13, 11, 0.4)',
@@ -281,14 +279,10 @@ export default function Menu() {
           </div>
         )}
 
-        {/* PIZZA */}
+        {/* PIZZA — 2 cols on md+, 1 col below */}
         {activeTab === 'pizza' && (
           <div>
-            <div className="pizza-grid" style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '2px',
-            }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-[2px]">
               {PIZZAS.map(pizza => (
                 <div key={pizza.name} style={{
                   background: 'rgba(15, 13, 11, 0.4)',
@@ -350,14 +344,11 @@ export default function Menu() {
           </div>
         )}
 
-        {/* DESSERTS & COCKTAILS */}
+        {/* DESSERTS & COCKTAILS — 1.5fr / 1fr on md+, stacked below */}
         {activeTab === 'desserts' && (
-          <div className="desserts-grid" style={{
-            display: 'grid',
-            gridTemplateColumns: '1.5fr 1fr',
-            gap: '2px',
-            alignItems: 'start',
-          }}>
+          <div
+            className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-[2px] items-start"
+          >
             {/* Desserts */}
             <div style={{
               background: 'rgba(15, 13, 11, 0.4)',
@@ -450,26 +441,6 @@ export default function Menu() {
         )}
 
       </div>
-
-      <style>{`
-        @media (max-width: 1024px) {
-          #menu .menu-mains-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-        }
-        @media (max-width: 860px) {
-          #menu { padding: 80px 0 !important; }
-          #menu > div { padding: 0 24px !important; }
-          #menu .menu-mains-grid,
-          #menu .pizza-grid,
-          #menu .desserts-grid {
-            grid-template-columns: 1fr !important;
-          }
-          #menu .menu-tabs {
-            gap: 0 !important;
-          }
-        }
-      `}</style>
     </section>
   )
 }
