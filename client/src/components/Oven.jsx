@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
-import { JabroniIcon } from './JabroniSVG'
 import SectionHeader from './SectionHeader'
+import TypoSlot from './TypoSlot'
 
 const COMMISSION_TIERS = [
   {
@@ -54,155 +54,6 @@ const COMMISSION_TIERS = [
   },
 ]
 
-/**
- * ImageSlot — image-or-typographic-composition slot.
- *
- * Photography is months away (per the research brief, Section 11). Until
- * real shots land, we render an oversized typographic composition instead
- * of a "photo coming soon" placeholder: a Bebas Neue temperature reading
- * (or other large numeral), a thin diagonal-hatched brick texture for
- * grit, the spec label in mono caps, and the existing JabroniIcon mark
- * to anchor the slot in brand. The component reserves the same dimensions
- * a real photo will eventually fill, so the swap is free.
- *
- * If a `src` is supplied AND the image loads, the typographic composition
- * is hidden via JS and the photo takes over.
- */
-function ImageSlot({ src, alt, label, headline, sub, style = {} }) {
-  return (
-    <div
-      role="img"
-      aria-label={alt || label || 'Wood-fired oven detail'}
-      style={{
-        position: 'relative',
-        overflow: 'hidden',
-        background: 'var(--curtain)',
-        border: '1px solid var(--char)',
-        ...style,
-      }}
-    >
-      {src && (
-        <img
-          src={src}
-          alt=""
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
-            position: 'relative',
-            zIndex: 2,
-          }}
-          onLoad={(e) => {
-            const sibling = e.target.nextSibling
-            if (sibling) sibling.style.display = 'none'
-          }}
-          onError={(e) => { e.target.style.display = 'none' }}
-        />
-      )}
-
-      {/* Typographic composition — replaces "photo coming soon" placeholder.
-          Brick-like diagonal hatch + oversized numerals + spec label. */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'flex-start',
-          padding: '20px 22px',
-          background: `
-            linear-gradient(135deg, rgba(201, 75, 26, 0.06) 0%, transparent 60%),
-            repeating-linear-gradient(
-              90deg,
-              rgba(61, 53, 48, 0.0) 0,
-              rgba(61, 53, 48, 0.35) 1px,
-              rgba(61, 53, 48, 0.0) 2px,
-              rgba(61, 53, 48, 0.0) 64px
-            ),
-            repeating-linear-gradient(
-              0deg,
-              rgba(61, 53, 48, 0.0) 0,
-              rgba(61, 53, 48, 0.30) 1px,
-              rgba(61, 53, 48, 0.0) 2px,
-              rgba(61, 53, 48, 0.0) 32px
-            ),
-            radial-gradient(ellipse 120% 90% at 80% 100%, rgba(201, 75, 26, 0.10) 0%, transparent 60%),
-            var(--curtain)
-          `,
-          zIndex: 1,
-        }}
-      >
-        {/* The big typographic numeral / phrase */}
-        {headline && (
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            textAlign: 'center',
-            pointerEvents: 'none',
-          }}>
-            <div style={{
-              fontFamily: 'var(--font-bebas)',
-              fontSize: 'clamp(3rem, 9vw, 5.5rem)',
-              letterSpacing: '4px',
-              color: 'var(--ember-glow)',
-              lineHeight: 1,
-              opacity: 0.9,
-            }}>
-              {headline}
-            </div>
-            {sub && (
-              <div style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '9px',
-                letterSpacing: '3px',
-                color: 'var(--gold)',
-                textTransform: 'uppercase',
-                marginTop: '8px',
-                opacity: 0.85,
-              }}>
-                {sub}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Mascot mark, low-opacity, in the upper-right */}
-        <JabroniIcon
-          style={{
-            position: 'absolute',
-            top: '14px',
-            right: '14px',
-            width: '28px',
-            height: '28px',
-            color: 'var(--ember)',
-            opacity: 0.4,
-          }}
-        />
-
-        {/* Bottom-left label — spec line */}
-        <div style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '9px',
-          letterSpacing: '2.5px',
-          color: 'var(--bone)',
-          textTransform: 'uppercase',
-          opacity: 0.8,
-          maxWidth: '70%',
-          lineHeight: 1.6,
-          position: 'relative',
-          zIndex: 1,
-        }}>
-          {label}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function Oven() {
   const sectionRef = useRef(null)
 
@@ -255,34 +106,41 @@ export default function Oven() {
         {/* Two-column layout — stacks below md (gap also tightens). */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-start">
           {/* LEFT: Gallery — typographic compositions stand in for photos
-              until real photography lands. The slots are sized to match
-              the eventual photo crops so the swap-in is a no-op. */}
+              until real photography lands. Each slot uses a distinct
+              <TypoSlot> variant; the variation IS the visual interest.
+              The slot dimensions match the eventual photo crops so a
+              real-photo drop-in is a one-prop swap (`imageSrc=…`). */}
           <div className="reveal">
-            {/* Hero image slot — peak temp reading */}
-            <ImageSlot
-              src="/images/oven-hero.jpg"
-              alt="Wood-fired oven at peak temperature"
-              label="Signature Series · Brick Dome · 42″ Mouth"
-              headline="850°F"
-              sub="Peak Hearth Temperature"
+            {/* Hero slot — Signature Series, peak-temperature readout. */}
+            <TypoSlot
+              variant="temperature"
+              kicker="Peak Hearth · Signature Series"
+              numeral="850"
+              suffix="°F"
+              descriptor="Olive wood. Live fire. Brick that holds the heat for hours."
+              caption="42″ Mouth · Hand-Laid Firebrick"
+              imageAlt="Wood-fired oven at peak temperature"
               style={{ height: '320px', marginBottom: '8px' }}
             />
-            {/* Two square slots */}
+            {/* Two square slots — distinct compositions. */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              <ImageSlot
-                src="/images/oven-tile.jpg"
-                alt="Estate-series custom arch"
-                label="Estate Series · Custom Arch"
-                headline="60″"
-                sub="Full Hearth"
+              {/* Estate Series — concentric brick dome, dome-diameter numeral. */}
+              <TypoSlot
+                variant="hearth"
+                kicker="Estate Hearth"
+                numeral="60"
+                suffix="″"
+                caption="Full Dome · Custom Arch"
+                imageAlt="Estate-series brick dome cross-section"
                 style={{ height: '180px' }}
               />
-              <ImageSlot
-                src="/images/oven-fire.jpg"
-                alt="Active live-fire hearth"
-                label="Active Hearth · Full Temp"
-                headline="1933"
-                sub="Family Lineage"
+              {/* Grand Commission — pull quote + hand-drawn cross-section. */}
+              <TypoSlot
+                variant="lineage"
+                quote="Built once. Burned forever."
+                estYear="1933"
+                caption="Italian Culinary Lineage"
+                imageAlt="Hand-drawn wood-fired oven cross-section"
                 style={{ height: '180px' }}
               />
             </div>
