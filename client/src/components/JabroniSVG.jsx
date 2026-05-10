@@ -20,7 +20,7 @@ export function JabroniMascot({ className = '', style = {} }) {
       <polygon points="100,165 80,155 90,200" fill="#1a1714" opacity="0.5" />
       <polygon points="100,165 120,155 110,200" fill="#1a1714" opacity="0.5" />
       {/* Tie */}
-      <polygon points="100,170 95,185 100,220 105,185" fill="#C94B1A" />
+      <polygon points="100,170 95,185 100,220 105,185" fill="#B53F14" />
       {/* Shirt */}
       <rect x="93" y="165" width="14" height="35" fill="#F5EFE4" opacity="0.9" />
       {/* Pocket square */}
@@ -37,7 +37,7 @@ export function JabroniMascot({ className = '', style = {} }) {
 
       {/* Cigar */}
       <rect x="170" y="222" width="28" height="5" rx="2" fill="#8B6914" />
-      <rect x="195" y="221" width="6" height="7" rx="1" fill="#C94B1A" opacity="0.8" />
+      <rect x="195" y="221" width="6" height="7" rx="1" fill="#B53F14" opacity="0.8" />
       {/* Cigar smoke */}
       <path d="M198 218 Q202 212 198 206 Q202 200 198 194" stroke="#3D3530" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.5" />
 
@@ -74,7 +74,7 @@ export function JabroniMascot({ className = '', style = {} }) {
       {/* Fedora crown */}
       <path d="M55 76 Q58 40 100 38 Q142 40 145 76" fill="#1A1714" />
       {/* Fedora band */}
-      <rect x="54" y="70" width="92" height="8" rx="0" fill="#C94B1A" opacity="0.8" />
+      <rect x="54" y="70" width="92" height="8" rx="0" fill="#B53F14" opacity="0.8" />
       {/* Fedora indent */}
       <path d="M78 50 Q100 44 122 50" stroke="#3D3530" strokeWidth="2" fill="none" opacity="0.5" />
 
@@ -144,7 +144,7 @@ export function JabroniTipHat({ className = '', style = {} }) {
       <rect x="52" y="155" width="96" height="110" rx="0" fill="#1A1714" />
       <polygon points="100,165 80,155 90,200" fill="#0F0D0B" opacity="0.7" />
       <polygon points="100,165 120,155 110,200" fill="#0F0D0B" opacity="0.7" />
-      <polygon points="100,170 95,185 100,220 105,185" fill="#C94B1A" />
+      <polygon points="100,170 95,185 100,220 105,185" fill="#B53F14" />
       <rect x="93" y="165" width="14" height="35" fill="#F5EFE4" opacity="0.9" />
 
       {/* Right arm raised — tipping hat */}
@@ -182,7 +182,7 @@ export function JabroniTipHat({ className = '', style = {} }) {
       {/* Fedora — tilted, being tipped */}
       <ellipse cx="100" cy="66" rx="58" ry="10" fill="#1A1714" transform="rotate(-15 100 66)" />
       <path d="M60 62 Q65 28 100 26 Q135 28 142 62" fill="#1A1714" transform="rotate(-15 100 44)" />
-      <rect x="58" y="58" width="92" height="8" rx="0" fill="#C94B1A" opacity="0.8" transform="rotate(-15 104 62)" />
+      <rect x="58" y="58" width="92" height="8" rx="0" fill="#B53F14" opacity="0.8" transform="rotate(-15 104 62)" />
 
       {/* Legs */}
       <rect x="62" y="260" width="28" height="20" rx="0" fill="#1A1714" />
@@ -207,7 +207,7 @@ export function JabroniShrug({ className = '', style = {} }) {
       <rect x="62" y="155" width="96" height="110" rx="0" fill="#1A1714" />
       <polygon points="110,165 90,155 100,200" fill="#0F0D0B" opacity="0.7" />
       <polygon points="110,165 130,155 120,200" fill="#0F0D0B" opacity="0.7" />
-      <polygon points="110,170 105,185 110,220 115,185" fill="#C94B1A" />
+      <polygon points="110,170 105,185 110,220 115,185" fill="#B53F14" />
 
       {/* Both arms raised in shrug */}
       <rect x="24" y="128" width="26" height="60" rx="0" fill="#1A1714" transform="rotate(-50 37 158)" />
@@ -219,7 +219,7 @@ export function JabroniShrug({ className = '', style = {} }) {
 
       {/* Cigar in mouth area */}
       <rect x="128" y="130" width="30" height="5" rx="2" fill="#8B6914" />
-      <ellipse cx="156" cy="129" rx="5" ry="6" fill="#C94B1A" opacity="0.7" />
+      <ellipse cx="156" cy="129" rx="5" ry="6" fill="#B53F14" opacity="0.7" />
 
       {/* Neck */}
       <rect x="96" y="128" width="28" height="32" rx="0" fill="#C9952A" opacity="0.85" />
@@ -247,7 +247,7 @@ export function JabroniShrug({ className = '', style = {} }) {
       {/* Fedora */}
       <ellipse cx="110" cy="72" rx="58" ry="10" fill="#1A1714" />
       <path d="M65 72 Q68 36 110 34 Q152 36 155 72" fill="#1A1714" />
-      <rect x="64" y="66" width="92" height="8" rx="0" fill="#C94B1A" opacity="0.8" />
+      <rect x="64" y="66" width="92" height="8" rx="0" fill="#B53F14" opacity="0.8" />
 
       {/* Legs */}
       <rect x="72" y="260" width="28" height="20" rx="0" fill="#1A1714" />
@@ -279,7 +279,7 @@ export function JabroniIcon({ className = '', style = {} }) {
       {/* Crown */}
       <path d="M14 23 Q16 10 30 9 Q44 10 46 23" fill="currentColor" />
       {/* Band */}
-      <rect x="13" y="20" width="34" height="4" fill="#C94B1A" opacity="0.8" />
+      <rect x="13" y="20" width="34" height="4" fill="#B53F14" opacity="0.8" />
       {/* Body hint */}
       <rect x="18" y="48" width="24" height="24" fill="currentColor" opacity="0.9" />
       {/* Cigar */}

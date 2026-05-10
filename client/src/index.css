@@ -17,7 +17,7 @@
 
 :root {
   /* Brand Colors */
-  --ember: #C94B1A;
+  --ember: #B53F14;
   --ember-glow: #E8622A;
   --ember-deep: #7A2710;
   --smoke: #1A1714;
@@ -151,11 +151,9 @@ h1, h2, h3, h4 {
 }
 
 /* Button base.
-   Note on contrast: cream (#F5EFE4) on ember (#C94B1A) is 4.07:1 — fails
-   the small-text AA threshold of 4.5:1 but clears the large-text 3:1
-   threshold when text is at least 14px bold (or 18px regular). We
-   therefore lock all .btn instances to 14px / 700 minimum so .btn-primary
-   passes contrast without darkening the brand accent. */
+   Contrast: cream (#F5EFE4) on ember (#B53F14) is 4.98:1, clearing AA 4.5:1
+   at any size. We still lock .btn to 14px / 700 / min-height 44px for touch
+   target compliance and consistent button rhythm. */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -276,7 +274,7 @@ h1, h2, h3, h4 {
 
 select.form-input {
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C94B1A' stroke-width='1.5' fill='none' stroke-linecap='square'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B53F14' stroke-width='1.5' fill='none' stroke-linecap='square'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 16px center;
   padding-right: 40px;

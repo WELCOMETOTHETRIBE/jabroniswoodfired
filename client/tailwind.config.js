@@ -44,7 +44,7 @@ export default {
     },
     extend: {
       colors: {
-        ember: '#C94B1A',
+        ember: '#B53F14',
         'ember-glow': '#E8622A',
         'ember-deep': '#7A2710',
         smoke: '#1A1714',

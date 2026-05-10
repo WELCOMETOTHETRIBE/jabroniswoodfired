@@ -249,6 +249,7 @@ export default function Nav({ persona = 'catering', onSelectPersona }) {
                   textDecoration: 'none',
                   padding: '14px 0',
                   minHeight: '44px', /* touch target — anchor's hit area covers full row */
+                  width: '100%', /* fill row so width also clears 44px (was 42px for 'Menu') */
                   borderBottom: '1px solid var(--ash)',
                 }}
               >
