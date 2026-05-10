@@ -3,17 +3,29 @@ import { JabroniIcon } from './JabroniSVG'
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
+  // Each link knows which persona owns its target section. Clicking the link
+  // dispatches a persona-switch event so the section is actually mounted
+  // before we attempt to scroll to it. App.jsx listens for this event.
   const navLinks = [
-    { label: 'Catering', href: '#packages' },
-    { label: 'Menu', href: '#menu' },
-    { label: 'Oven Commissions', href: '#oven' },
-    { label: 'The Experience', href: '#experience' },
-    { label: 'Book the Fire', href: '#booking' },
+    { label: 'Catering', href: '#packages', persona: 'catering' },
+    { label: 'Menu', href: '#menu', persona: 'catering' },
+    { label: 'Oven Commissions', href: '#oven', persona: 'ovens' },
+    { label: 'The Experience', href: '#experience', persona: 'evening' },
+    { label: 'Book the Fire', href: '#booking', persona: null },
   ]
 
-  const handleNavClick = (e, href) => {
+  const handleNavClick = (e, link) => {
     e.preventDefault()
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+    if (link.persona) {
+      window.dispatchEvent(new CustomEvent('jabroni:select-persona', {
+        detail: { persona: link.persona },
+      }))
+    }
+    // Two RAFs — let React commit any persona panel swap before we try to
+    // scroll. Without this, scrollIntoView lands on the old panel briefly.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' })
+    }))
   }
 
   return (
@@ -79,26 +91,33 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Nav links */}
+          {/* Nav links — each anchor is a 44px-tall touch target. The
+              visual rhythm is preserved because the anchors were already
+              ~14px tall with 14px gap; the new min-height absorbs that
+              into a single hit area. */}
           <nav>
-            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'flex-end' }}>
+            <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-end' }}>
               {navLinks.map(link => (
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    onClick={(e) => handleNavClick(e, link.href)}
+                    onClick={(e) => handleNavClick(e, link)}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      minHeight: '44px',
+                      padding: '0 4px',
                       fontFamily: 'var(--font-mono)',
                       fontSize: '11px',
                       letterSpacing: '2px',
                       textTransform: 'uppercase',
                       color: 'var(--bone)',
-                      opacity: 0.5,
+                      opacity: 0.65, /* up from 0.5 so AA contrast clears */
                       textDecoration: 'none',
                       transition: 'color 0.2s ease, opacity 0.2s ease',
                     }}
-                    onMouseEnter={e => { e.target.style.color = 'var(--ember-glow)'; e.target.style.opacity = '1' }}
-                    onMouseLeave={e => { e.target.style.color = 'var(--bone)'; e.target.style.opacity = '0.5' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = 'var(--ember-glow)'; e.currentTarget.style.opacity = '1' }}
+                    onMouseLeave={e => { e.currentTarget.style.color = 'var(--bone)'; e.currentTarget.style.opacity = '0.65' }}
                   >
                     {link.label}
                   </a>

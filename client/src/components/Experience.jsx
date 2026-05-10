@@ -70,12 +70,23 @@ export default function Experience() {
 
   const scrollToBooking = (e) => {
     e.preventDefault()
+    // Express interest in The Evening — pre-select the matching inquiry type
+    window.dispatchEvent(new CustomEvent('jabroni:preselect-inquiry', {
+      detail: { value: "A Jabroni's Evening" },
+    }))
     document.querySelector('#booking')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   const scrollToPackages = (e) => {
     e.preventDefault()
-    document.querySelector('#packages')?.scrollIntoView({ behavior: 'smooth' })
+    // Hop back to the Catering persona before scrolling — the Packages
+    // section only mounts inside that panel
+    window.dispatchEvent(new CustomEvent('jabroni:select-persona', {
+      detail: { persona: 'catering' },
+    }))
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.querySelector('#packages')?.scrollIntoView({ behavior: 'smooth' })
+    }))
   }
 
   return (
@@ -436,13 +447,14 @@ export default function Experience() {
           </div>
         </div>
 
-        {/* CTAs */}
+        {/* CTAs. 14px/700 so .btn-primary cream-on-ember clears
+            large-text 3:1 contrast (4.07:1 base). */}
         <div className="reveal" style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <a
             href="#booking"
             onClick={scrollToBooking}
             className="btn btn-ghost"
-            style={{ fontSize: '12px', letterSpacing: '2px', padding: '16px 32px' }}
+            style={{ fontSize: '14px', fontWeight: 700, letterSpacing: '2px', padding: '16px 32px' }}
           >
             Express Interest
           </a>
@@ -450,7 +462,7 @@ export default function Experience() {
             href="#packages"
             onClick={scrollToPackages}
             className="btn btn-primary"
-            style={{ fontSize: '12px', letterSpacing: '2px', padding: '16px 32px' }}
+            style={{ fontSize: '14px', fontWeight: 700, letterSpacing: '2px', padding: '16px 32px' }}
           >
             Book Catering Now →
           </a>

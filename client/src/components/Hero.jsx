@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-export default function Hero() {
+export default function Hero({ onSelectPersona }) {
   const heroRef = useRef(null)
 
   useEffect(() => {
@@ -18,12 +18,21 @@ export default function Hero() {
 
   const scrollToBooking = (e) => {
     e.preventDefault()
+    // Default to the catering persona when the user takes the primary path
+    onSelectPersona?.('catering')
     document.querySelector('#booking')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   const scrollToOven = (e) => {
     e.preventDefault()
-    document.querySelector('#oven')?.scrollIntoView({ behavior: 'smooth' })
+    // Switch to the Ovens persona before scrolling — the Oven section only
+    // renders inside that persona panel. Two RAFs is the cheap way to be
+    // certain React has committed the panel swap before we try to land on
+    // the new node.
+    onSelectPersona?.('ovens')
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.querySelector('#oven')?.scrollIntoView({ behavior: 'smooth' })
+    }))
   }
 
   return (
@@ -89,8 +98,53 @@ export default function Hero() {
 
         {/* LEFT — copy */}
         <div>
-          {/* Eyebrow */}
-          <div className="eyebrow" style={{ marginBottom: '32px', opacity: 0.8 }}>
+          {/* Now-booking + qualification line — folded into the Hero so the
+              regional service-area buyer's #1 question ("do you serve my
+              area?") is answerable without scrolling. Replaces the old
+              standalone PhaseBanner strip. */}
+          <div
+            className="hero-qualifier"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              marginBottom: '32px',
+              flexWrap: 'wrap',
+            }}
+          >
+            <span
+              aria-hidden="true"
+              style={{
+                display: 'inline-block',
+                width: '7px',
+                height: '7px',
+                borderRadius: '50%',
+                background: 'var(--gold)',
+                animation: 'pulseDot 2.5s ease-in-out infinite',
+                flexShrink: 0,
+              }}
+            />
+            <span
+              className="eyebrow"
+              style={{
+                color: 'var(--gold)',
+                opacity: 1,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Now Booking
+            </span>
+            <span aria-hidden="true" style={{ color: 'var(--char)', fontSize: '12px' }}>·</span>
+            <span
+              className="eyebrow"
+              style={{ opacity: 0.85, color: 'var(--bone)' }}
+            >
+              Coachella Valley + South Bay LA
+            </span>
+          </div>
+
+          {/* Occasion qualifier */}
+          <div className="eyebrow" style={{ marginBottom: '32px', opacity: 0.6 }}>
             Block Parties · Graduations · Small Weddings
           </div>
 
@@ -122,13 +176,14 @@ export default function Hero() {
             The fire starts two hours before the first guest arrives. Olive wood and hickory, laid by hand, coaxed to temperature the slow way — the way our family has done it since 1933. By the time the smoke reaches the street, something primal has already happened. The meal hasn't even begun.
           </p>
 
-          {/* CTAs */}
+          {/* CTAs. Locked at 14px/700 so .btn-primary cream-on-ember
+              (4.07:1) clears WCAG large-text 3:1. */}
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
             <a
               href="#booking"
               onClick={scrollToBooking}
               className="btn btn-primary"
-              style={{ fontSize: '13px', letterSpacing: '2px', padding: '16px 36px' }}
+              style={{ fontSize: '14px', fontWeight: 700, letterSpacing: '2px', padding: '16px 36px' }}
             >
               Book Your Event
             </a>
@@ -136,13 +191,15 @@ export default function Hero() {
               href="#oven"
               onClick={scrollToOven}
               className="btn btn-ghost"
-              style={{ fontSize: '13px', letterSpacing: '2px', padding: '16px 36px' }}
+              style={{ fontSize: '14px', fontWeight: 700, letterSpacing: '2px', padding: '16px 36px' }}
             >
               Commission an Oven →
             </a>
           </div>
 
-          {/* On the fire strip */}
+          {/* On the fire strip. "Burning tonight" was 9px ember-on-stage at
+              4.16:1 — fails small-text AA. Bumped to 11px and shifted to
+              ember-glow which clears comfortably (~5.5:1 on stage). */}
           <div style={{
             marginTop: '48px',
             paddingTop: '24px',
@@ -150,9 +207,9 @@ export default function Hero() {
           }}>
             <span style={{
               fontFamily: 'var(--font-mono)',
-              fontSize: '9px',
+              fontSize: '11px',
               letterSpacing: '3px',
-              color: 'var(--ember)',
+              color: 'var(--ember-glow)',
               textTransform: 'uppercase',
               display: 'block',
               marginBottom: '12px',
@@ -184,7 +241,9 @@ export default function Hero() {
                     {dish}
                   </span>
                   {i < arr.length - 1 && (
-                    <span style={{ color: 'var(--char)', fontSize: '10px', opacity: 0.6 }}>·</span>
+                    /* Decorative separator — aria-hidden so axe stops scoring
+                       its decorative low-contrast as a content failure. */
+                    <span aria-hidden="true" style={{ color: 'var(--char)', fontSize: '10px', opacity: 0.6 }}>·</span>
                   )}
                 </span>
               ))}

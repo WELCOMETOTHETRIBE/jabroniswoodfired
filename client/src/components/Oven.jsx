@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { JabroniIcon } from './JabroniSVG'
+import SectionHeader from './SectionHeader'
 
 const COMMISSION_TIERS = [
   {
@@ -53,52 +54,149 @@ const COMMISSION_TIERS = [
   },
 ]
 
-function ImageSlot({ src, alt, label, style = {} }) {
+/**
+ * ImageSlot — image-or-typographic-composition slot.
+ *
+ * Photography is months away (per the research brief, Section 11). Until
+ * real shots land, we render an oversized typographic composition instead
+ * of a "photo coming soon" placeholder: a Bebas Neue temperature reading
+ * (or other large numeral), a thin diagonal-hatched brick texture for
+ * grit, the spec label in mono caps, and the existing JabroniIcon mark
+ * to anchor the slot in brand. The component reserves the same dimensions
+ * a real photo will eventually fill, so the swap is free.
+ *
+ * If a `src` is supplied AND the image loads, the typographic composition
+ * is hidden via JS and the photo takes over.
+ */
+function ImageSlot({ src, alt, label, headline, sub, style = {} }) {
   return (
-    <div style={{
-      position: 'relative',
-      overflow: 'hidden',
-      background: 'var(--ash)',
-      border: '1px solid var(--char)',
-      ...style,
-    }}>
-      <img
-        src={src}
-        alt={alt}
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-        onError={(e) => { e.target.style.display = 'none' }}
-      />
-      {/* Placeholder overlay — shown if image missing */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        gap: '8px',
-        background: 'var(--ash)',
-      }}>
-        <div style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '10px',
-          letterSpacing: '2px',
-          color: 'var(--ember-glow)',
-          textTransform: 'uppercase',
-          textAlign: 'center',
-          lineHeight: 1.8,
-          padding: '0 24px',
-        }}>
-          {label}
-        </div>
+    <div
+      role="img"
+      aria-label={alt || label || 'Wood-fired oven detail'}
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'var(--curtain)',
+        border: '1px solid var(--char)',
+        ...style,
+      }}
+    >
+      {src && (
+        <img
+          src={src}
+          alt=""
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+            position: 'relative',
+            zIndex: 2,
+          }}
+          onLoad={(e) => {
+            const sibling = e.target.nextSibling
+            if (sibling) sibling.style.display = 'none'
+          }}
+          onError={(e) => { e.target.style.display = 'none' }}
+        />
+      )}
+
+      {/* Typographic composition — replaces "photo coming soon" placeholder.
+          Brick-like diagonal hatch + oversized numerals + spec label. */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'flex-start',
+          padding: '20px 22px',
+          background: `
+            linear-gradient(135deg, rgba(201, 75, 26, 0.06) 0%, transparent 60%),
+            repeating-linear-gradient(
+              90deg,
+              rgba(61, 53, 48, 0.0) 0,
+              rgba(61, 53, 48, 0.35) 1px,
+              rgba(61, 53, 48, 0.0) 2px,
+              rgba(61, 53, 48, 0.0) 64px
+            ),
+            repeating-linear-gradient(
+              0deg,
+              rgba(61, 53, 48, 0.0) 0,
+              rgba(61, 53, 48, 0.30) 1px,
+              rgba(61, 53, 48, 0.0) 2px,
+              rgba(61, 53, 48, 0.0) 32px
+            ),
+            radial-gradient(ellipse 120% 90% at 80% 100%, rgba(201, 75, 26, 0.10) 0%, transparent 60%),
+            var(--curtain)
+          `,
+          zIndex: 1,
+        }}
+      >
+        {/* The big typographic numeral / phrase */}
+        {headline && (
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            textAlign: 'center',
+            pointerEvents: 'none',
+          }}>
+            <div style={{
+              fontFamily: 'var(--font-bebas)',
+              fontSize: 'clamp(3rem, 9vw, 5.5rem)',
+              letterSpacing: '4px',
+              color: 'var(--ember-glow)',
+              lineHeight: 1,
+              opacity: 0.9,
+            }}>
+              {headline}
+            </div>
+            {sub && (
+              <div style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '9px',
+                letterSpacing: '3px',
+                color: 'var(--gold)',
+                textTransform: 'uppercase',
+                marginTop: '8px',
+                opacity: 0.85,
+              }}>
+                {sub}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Mascot mark, low-opacity, in the upper-right */}
+        <JabroniIcon
+          style={{
+            position: 'absolute',
+            top: '14px',
+            right: '14px',
+            width: '28px',
+            height: '28px',
+            color: 'var(--ember)',
+            opacity: 0.4,
+          }}
+        />
+
+        {/* Bottom-left label — spec line */}
         <div style={{
           fontFamily: 'var(--font-mono)',
           fontSize: '9px',
-          letterSpacing: '1.5px',
-          color: 'var(--muted)',
+          letterSpacing: '2.5px',
+          color: 'var(--bone)',
           textTransform: 'uppercase',
+          opacity: 0.8,
+          maxWidth: '70%',
+          lineHeight: 1.6,
+          position: 'relative',
+          zIndex: 1,
         }}>
-          Your fire. Your photo. Coming soon.
+          {label}
         </div>
       </div>
     </div>
@@ -126,18 +224,12 @@ export default function Oven() {
 
   const scrollToBooking = (e) => {
     e.preventDefault()
-    const booking = document.querySelector('#booking')
-    if (booking) {
-      booking.scrollIntoView({ behavior: 'smooth' })
-      // Attempt to pre-select oven commission in the form
-      setTimeout(() => {
-        const select = document.querySelector('#inquiry-type')
-        if (select) {
-          select.value = 'Oven Commission'
-          select.dispatchEvent(new Event('change', { bubbles: true }))
-        }
-      }, 600)
-    }
+    // Fire the global pre-select event — Booking.jsx listens for this and
+    // sets the inquiry type without us touching its DOM directly.
+    window.dispatchEvent(new CustomEvent('jabroni:preselect-inquiry', {
+      detail: { value: 'Oven Commission' },
+    }))
+    document.querySelector('#booking')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
@@ -148,38 +240,13 @@ export default function Oven() {
     }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 48px' }}>
 
-        {/* Section header */}
-        <div className="fire-rule reveal" style={{ marginBottom: '48px' }}>
-          <span>The Oven</span>
-          <JabroniIcon style={{ width: '24px', height: '24px', color: 'var(--ember)', flexShrink: 0 }} />
-          <span>Commission</span>
-        </div>
-
-        <div className="reveal reveal-delay-1">
-          <span className="eyebrow">Static &amp; Mobile · Hand-Built · No Catalog</span>
-        </div>
-        <h2 className="reveal reveal-delay-2" style={{
-          fontFamily: 'var(--font-playfair)',
-          fontWeight: 900,
-          fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-          color: 'var(--cream)',
-          margin: '12px 0 20px',
-          letterSpacing: '-0.5px',
-        }}>
-          Built for Your Space.{' '}
-          <em style={{ color: 'var(--ember-glow)', fontStyle: 'italic' }}>Static or Mobile.</em>
-        </h2>
-        <p className="reveal reveal-delay-2" style={{
-          fontFamily: 'var(--font-cormorant)',
-          fontSize: '1.1rem',
-          fontWeight: 300,
-          color: 'var(--bone)',
-          lineHeight: 1.75,
-          marginBottom: '48px',
-          maxWidth: '560px',
-        }}>
-          A wood-fired oven is a living thing. It breathes. It holds heat in the brick long after the fire dies down. Fueled by olive wood and built with hand-laid firebrick the way southern Italian masons have done for centuries, each oven we commission carries a lineage that predates every kitchen appliance you've ever owned. Static builds for estates and restaurants. Mobile rigs that come to you.
-        </p>
+        <SectionHeader
+          kicker={{ left: 'The Oven', right: 'Commission' }}
+          eyebrow="Static & Mobile · Hand-Built · No Catalog"
+          title="Built for Your Space."
+          accent="Static or Mobile."
+          body="A wood-fired oven is a living thing. It breathes. It holds heat in the brick long after the fire dies down. Fueled by olive wood and built with hand-laid firebrick the way southern Italian masons have done for centuries, each oven we commission carries a lineage that predates every kitchen appliance you've ever owned. Static builds for estates and restaurants. Mobile rigs that come to you."
+        />
 
         {/* Two-column layout */}
         <div className="oven-grid" style={{
@@ -188,27 +255,35 @@ export default function Oven() {
           gap: '64px',
           alignItems: 'start',
         }}>
-          {/* LEFT: Gallery */}
+          {/* LEFT: Gallery — typographic compositions stand in for photos
+              until real photography lands. The slots are sized to match
+              the eventual photo crops so the swap-in is a no-op. */}
           <div className="reveal">
-            {/* Hero image slot */}
+            {/* Hero image slot — peak temp reading */}
             <ImageSlot
               src="/images/oven-hero.jpg"
-              alt="Wood-fired oven hero shot"
+              alt="Wood-fired oven at peak temperature"
               label="Signature Series · Brick Dome · 42″ Mouth"
+              headline="850°F"
+              sub="Peak Hearth Temperature"
               style={{ height: '320px', marginBottom: '8px' }}
             />
             {/* Two square slots */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               <ImageSlot
                 src="/images/oven-tile.jpg"
-                alt="Oven detail tile"
+                alt="Estate-series custom arch"
                 label="Estate Series · Custom Arch"
+                headline="60″"
+                sub="Full Hearth"
                 style={{ height: '180px' }}
               />
               <ImageSlot
                 src="/images/oven-fire.jpg"
-                alt="Fire in the oven"
+                alt="Active live-fire hearth"
                 label="Active Hearth · Full Temp"
+                headline="1933"
+                sub="Family Lineage"
                 style={{ height: '180px' }}
               />
             </div>
@@ -266,11 +341,12 @@ export default function Oven() {
                     {tier.featured && (
                       <span style={{
                         fontFamily: 'var(--font-mono)',
-                        fontSize: '9px',
+                        fontSize: '10px', /* up from 9px — and shifted to ember-glow which clears AA on ash */
+                        fontWeight: 700,
                         letterSpacing: '2px',
-                        color: 'var(--ember)',
+                        color: 'var(--ember-glow)',
                         border: '1px solid var(--ember)',
-                        padding: '2px 8px',
+                        padding: '3px 8px',
                         textTransform: 'uppercase',
                       }}>
                         Featured

@@ -120,8 +120,14 @@ class Particle {
 
 // ─── Engine ───────────────────────────────────────────────────────────────────
 function initSmoke() {
+  // Accessibility: bail out entirely when reduced motion is requested. The smoke
+  // is decorative; nothing in the page depends on it being present.
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
+
   const isMobile = 'ontouchstart' in window;
-  const MAX_POOL = isMobile ? 250 : 400;
+  const MAX_POOL = isMobile ? 150 : 400;
 
   const pool = Array.from({ length: MAX_POOL }, () => new Particle());
   let recycleIdx = 0;

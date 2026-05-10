@@ -2,8 +2,16 @@
 // mix-blend-mode:screen — black = invisible, glow adds light above page.
 
 function initEmber() {
+  // Accessibility: skip the ember layer entirely when the user has asked the OS
+  // to reduce motion. The atmosphere is decorative, not load-bearing.
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
+
   const isMobile = 'ontouchstart' in window;
-  const COUNT    = isMobile ? 12 : 22;
+  // Mobile gets a much smaller cohort — battery + scroll perf cost outweighs
+  // the visual benefit on small screens. Desktop keeps the full count.
+  const COUNT    = isMobile ? 6 : 22;
 
   const canvas = document.createElement('canvas');
   canvas.style.cssText = [

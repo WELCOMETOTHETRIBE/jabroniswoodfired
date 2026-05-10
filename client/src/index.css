@@ -108,13 +108,22 @@ h1, h2, h3, h4 {
   border-bottom: 2px solid var(--ember);
 }
 
-/* Eyebrow label style */
+/* Eyebrow label style.
+   Floor at 11px so AA contrast clears for gold/ember on ash/smoke at the
+   sizes axe was flagging (9–10px instances of ember-on-stage at 4.16:1 fail
+   small-text AA but clear large-text). 11px gold-on-smoke = ~5.6:1 — passes. */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--gold);
+}
+
+/* Pulse dot animation — used by Hero qualifier and any other "live" indicator. */
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(0.7); }
 }
 
 /* Phase 2 badge */
@@ -129,14 +138,23 @@ h1, h2, h3, h4 {
   border: 1px solid var(--gold);
 }
 
-/* Button base */
+/* Button base.
+   Note on contrast: cream (#F5EFE4) on ember (#C94B1A) is 4.07:1 — fails
+   the small-text AA threshold of 4.5:1 but clears the large-text 3:1
+   threshold when text is at least 14px bold (or 18px regular). We
+   therefore lock all .btn instances to 14px / 700 minimum so .btn-primary
+   passes contrast without darkening the brand accent. */
 .btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
   padding: 14px 28px;
+  min-height: 44px; /* touch target */
   cursor: pointer;
   border: none;
   outline: none;
@@ -155,6 +173,11 @@ h1, h2, h3, h4 {
 .btn-primary {
   background: var(--ember);
   color: var(--cream);
+  /* Belt-and-braces: re-state weight/size at this layer so any per-call-site
+     `style={{ fontSize }}` override that's below 14px gets a useful console
+     warning if devs lint inline styles, but more importantly the `.btn`
+     base is already at 14px/700. */
+  font-weight: 700;
 }
 
 .btn-primary:hover {
@@ -280,21 +303,26 @@ select.form-input option {
    ============================================================ */
 
 @media (max-width: 640px) {
-  /* Ensure buttons don't clip on small screens */
+  /* Ensure buttons don't clip on small screens — keep 14px/700 for AA contrast
+     on .btn-primary (large-text 3:1 threshold). */
   .btn {
-    padding: 12px 20px;
-    font-size: 11px;
+    padding: 12px 18px;
+    font-size: 14px;
+    min-height: 44px;
   }
 
-  /* Fire rule text wraps cleanly */
+  /* Fire rule text wraps cleanly. 10px gold-on-smoke = 5.5:1 still passes
+     small-text AA. */
   .fire-rule {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 2px;
   }
 
-  /* Eyebrow text never overflows */
+  /* Eyebrow text never overflows. Floor at 11px to keep contrast safe —
+     dropping to 10px on a small screen with gold/ember-glow on ash/char
+     starts to fall below 4.5:1 AA. */
   .eyebrow {
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 2px;
   }
 }
@@ -305,4 +333,96 @@ select.form-input option {
     font-size: 8px;
     padding: 2px 6px;
   }
+}
+
+/* ============================================================
+   Accessibility — reduced motion
+   When the user has enabled reduce-motion at the OS level we collapse
+   reveal animations to instant and remove smooth scroll. The ember/smoke
+   canvas layers also short-circuit in their JS init.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal,
+  .reveal-delay-1,
+  .reveal-delay-2,
+  .reveal-delay-3,
+  .reveal-delay-4 {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ============================================================
+   Focus visibility — a single cohesive ring across the design.
+   The default browser outline is hard to see on dark surfaces, so we
+   draw an ember outline only when the focus is keyboard-driven.
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid var(--ember-glow);
+  outline-offset: 2px;
+}
+button:focus-visible,
+a:focus-visible,
+[role="tab"]:focus-visible {
+  outline: 2px solid var(--ember-glow);
+  outline-offset: 3px;
+}
+
+/* ============================================================
+   Persona tab strip — shared primitive used by PersonaTabs.jsx.
+   Sticky-on-mobile under the fixed nav so the user can switch
+   intent at any scroll depth.
+   ============================================================ */
+.persona-tab-strip {
+  position: sticky;
+  top: 72px;
+  z-index: 50;
+  background: rgba(15, 13, 11, 0.97);
+  border-bottom: 1px solid var(--char);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* ============================================================
+   Sticky mobile bottom CTA — appears on touch devices, hides when
+   the booking form is on screen, respects safe-area-inset-bottom.
+   ============================================================ */
+.sticky-mobile-cta {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  display: none;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, rgba(15, 13, 11, 0.98) 70%, rgba(15, 13, 11, 0));
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.sticky-mobile-cta.is-visible {
+  pointer-events: auto;
+}
+.sticky-mobile-cta.is-hidden {
+  opacity: 0;
+  transform: translateY(120%);
+  pointer-events: none;
+}
+.sticky-mobile-cta .btn {
+  width: 100%;
+  display: block;
+  text-align: center;
+}
+@media (max-width: 860px) {
+  .sticky-mobile-cta { display: block; }
+}
+
+/* When sticky CTA is showing, give the page enough breathing room
+   above the footer so the bar never crops the last line of content.
+   Bumped from 76px → 140px so the long-scroll disclosure button at the
+   bottom of the page is reachable above the bar (the verifier reported
+   `element is not visible` because the button was occluded). */
+@media (max-width: 860px) {
+  body.has-sticky-cta { padding-bottom: 140px; }
 }

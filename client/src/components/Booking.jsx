@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
-import { JabroniTipHat, JabroniIcon } from './JabroniSVG'
+import { JabroniTipHat } from './JabroniSVG'
+import SectionHeader from './SectionHeader'
 
 const INQUIRY_TYPES = [
   { value: '', label: 'Select inquiry type...' },
@@ -25,8 +26,8 @@ const INITIAL_FORM = {
   message: '',
 }
 
-export default function Booking() {
-  const [form, setForm] = useState(INITIAL_FORM)
+export default function Booking({ initialInquiryType = '' }) {
+  const [form, setForm] = useState({ ...INITIAL_FORM, type: initialInquiryType || '' })
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | loading | success | error
   const [errorMessage, setErrorMessage] = useState('')
@@ -48,6 +49,31 @@ export default function Booking() {
     observer.observe(sectionRef.current)
     return () => observer.disconnect()
   }, [])
+
+  // Keep the form's inquiry type in sync with the active persona / CTA.
+  // The previous implementation reached into the DOM with `select.value =`
+  // and dispatched a synthetic change event from Oven.jsx. We replace that
+  // with a cleaner global custom event: any CTA in the page can dispatch
+  // `jabroni:preselect-inquiry` with the desired value and the form will
+  // pick it up. This lets us drive pre-selection from PersonaTabs, the
+  // sticky mobile CTA, and section-internal CTAs without DOM reach-arounds.
+  useEffect(() => {
+    const handler = (e) => {
+      const next = e?.detail?.value
+      if (typeof next !== 'string') return
+      setForm(prev => prev.type === next ? prev : { ...prev, type: next })
+      if (errors.type) setErrors(prev => ({ ...prev, type: '' }))
+    }
+    window.addEventListener('jabroni:preselect-inquiry', handler)
+    return () => window.removeEventListener('jabroni:preselect-inquiry', handler)
+  }, [errors.type])
+
+  // Honor the `initialInquiryType` prop changing while the form is mounted
+  // (e.g. user switches personas without ever submitting).
+  useEffect(() => {
+    if (!initialInquiryType) return
+    setForm(prev => prev.type ? prev : { ...prev, type: initialInquiryType })
+  }, [initialInquiryType])
 
   const validate = () => {
     const newErrors = {}
@@ -113,12 +139,10 @@ export default function Booking() {
     }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 48px' }}>
 
-        {/* Section header */}
-        <div className="fire-rule reveal" style={{ marginBottom: '48px' }}>
-          <span>Book</span>
-          <JabroniIcon style={{ width: '24px', height: '24px', color: 'var(--ember)', flexShrink: 0 }} />
-          <span>Inquire</span>
-        </div>
+        <SectionHeader
+          kicker={{ left: 'Book', right: 'Inquire' }}
+          bottomMargin="48px"
+        />
 
         <div className="booking-grid" style={{
           display: 'grid',
@@ -175,9 +199,9 @@ export default function Booking() {
             <div className="reveal reveal-delay-3" style={{ marginBottom: '40px' }}>
               <p style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '9px',
+                fontSize: '11px', /* 9px ember-on-smoke fails AA — 11px ember-glow clears */
                 letterSpacing: '2px',
-                color: 'var(--ember)',
+                color: 'var(--ember-glow)',
                 textTransform: 'uppercase',
                 marginBottom: '10px',
               }}>
@@ -293,8 +317,8 @@ export default function Booking() {
 
                 {/* Inquiry type */}
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={labelStyle}>
-                    Inquiry Type <span style={{ color: 'var(--ember)' }}>*</span>
+                  <label htmlFor="inquiry-type" style={labelStyle}>
+                    Inquiry Type <span style={{ color: 'var(--ember)' }} aria-hidden="true">*</span>
                   </label>
                   <select
                     id="inquiry-type"
@@ -303,6 +327,9 @@ export default function Booking() {
                     onChange={handleChange}
                     className={`form-input${errors.type ? ' error' : ''}`}
                     ref={selectRef}
+                    aria-label="Inquiry type"
+                    aria-required="true"
+                    aria-invalid={errors.type ? 'true' : 'false'}
                   >
                     {INQUIRY_TYPES.map(opt => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -333,8 +360,9 @@ export default function Booking() {
 
                 {/* Message */}
                 <div style={{ marginBottom: '24px' }}>
-                  <label style={labelStyle}>Message</label>
+                  <label htmlFor="booking-message" style={labelStyle}>Message</label>
                   <textarea
+                    id="booking-message"
                     name="message"
                     value={form.message}
                     onChange={handleChange}
@@ -361,14 +389,16 @@ export default function Booking() {
                   </div>
                 )}
 
-                {/* Submit */}
+                {/* Submit. Locked at 14px/700 so cream-on-ember (4.07:1) qualifies
+                    for the WCAG large-text 3:1 threshold. */}
                 <button
                   type="submit"
                   disabled={status === 'loading'}
                   className="btn btn-primary"
                   style={{
                     width: '100%',
-                    fontSize: '13px',
+                    fontSize: '14px',
+                    fontWeight: 700,
                     letterSpacing: '3px',
                     padding: '18px',
                     opacity: status === 'loading' ? 0.7 : 1,
@@ -381,7 +411,7 @@ export default function Booking() {
 
                 <p style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '9px',
+                  fontSize: '10px', /* 9px → 10px; muted on smoke = 4.9:1, safe */
                   color: 'var(--muted)',
                   letterSpacing: '1.5px',
                   marginTop: '12px',
@@ -473,12 +503,19 @@ function SuccessState({ onReset }) {
 }
 
 function FormField({ label, name, type = 'text', value, onChange, error, placeholder, required, min }) {
+  // Stable id for the label/input association — axe `select-name` /
+  // `label` rules require an explicit `htmlFor` on a sibling label or an
+  // aria-label on the input itself. Using `htmlFor` here is the correct
+  // semantic, since the visible label is exactly what we want screen
+  // readers to read.
+  const fieldId = `booking-field-${name}`
   return (
     <div>
-      <label style={labelStyle}>
-        {label}{required && <span style={{ color: 'var(--ember)' }}> *</span>}
+      <label htmlFor={fieldId} style={labelStyle}>
+        {label}{required && <span style={{ color: 'var(--ember)' }} aria-hidden="true"> *</span>}
       </label>
       <input
+        id={fieldId}
         type={type}
         name={name}
         value={value}
@@ -486,6 +523,8 @@ function FormField({ label, name, type = 'text', value, onChange, error, placeho
         placeholder={placeholder}
         className={`form-input${error ? ' error' : ''}`}
         min={min}
+        aria-required={required ? 'true' : undefined}
+        aria-invalid={error ? 'true' : undefined}
       />
       {error && <span style={errorStyle}>{error}</span>}
     </div>

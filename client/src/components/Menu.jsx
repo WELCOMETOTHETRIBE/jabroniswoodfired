@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { JabroniIcon } from './JabroniSVG'
+import SectionHeader from './SectionHeader'
 
 const TABS = [
   { id: 'mains', label: 'Mains & Sides' },
@@ -192,38 +192,13 @@ export default function Menu() {
     }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 48px' }}>
 
-        {/* Section header */}
-        <div className="fire-rule reveal" style={{ marginBottom: '48px' }}>
-          <span>The Menu</span>
-          <JabroniIcon style={{ width: '24px', height: '24px', color: 'var(--ember)', flexShrink: 0 }} />
-          <span>The Menu</span>
-        </div>
-
-        <div className="reveal reveal-delay-1" style={{ marginBottom: '8px' }}>
-          <span className="eyebrow">Olive Wood · Hickory · Live Fire · Italian Heritage</span>
-        </div>
-        <h2 className="reveal reveal-delay-2" style={{
-          fontFamily: 'var(--font-playfair)',
-          fontWeight: 900,
-          fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-          color: 'var(--cream)',
-          marginBottom: '16px',
-          letterSpacing: '-0.5px',
-        }}>
-          Built by the Fire,{' '}
-          <em style={{ color: 'var(--ember-glow)', fontStyle: 'italic' }}>Shared at the Table.</em>
-        </h2>
-        <p className="reveal reveal-delay-2" style={{
-          fontFamily: 'var(--font-cormorant)',
-          fontSize: '1.1rem',
-          fontWeight: 300,
-          color: 'var(--bone)',
-          lineHeight: 1.75,
-          marginBottom: '48px',
-          maxWidth: '560px',
-        }}>
-          Everything on this menu exists because of the fire. The brisket smokes for twelve hours over hickory. The pizza blisters in ninety seconds against live oak flame. The olive wood gives a sweetness that no oven, no broiler, no gas burner has ever replicated. This is the menu the fire makes possible.
-        </p>
+        <SectionHeader
+          kicker={{ left: 'The Menu', right: 'The Menu' }}
+          eyebrow="Olive Wood · Hickory · Live Fire · Italian Heritage"
+          title="Built by the Fire,"
+          accent="Shared at the Table."
+          body="Everything on this menu exists because of the fire. The brisket smokes for twelve hours over hickory. The pizza blisters in ninety seconds against live oak flame. The olive wood gives a sweetness that no oven, no broiler, no gas burner has ever replicated. This is the menu the fire makes possible."
+        />
 
         {/* Tabs */}
         <div className="reveal reveal-delay-3 menu-tabs" style={{
@@ -244,19 +219,20 @@ export default function Menu() {
                 borderBottom: activeTab === tab.id ? '2px solid var(--ember)' : '2px solid transparent',
                 marginBottom: '-1px',
                 padding: '14px 28px',
+                minHeight: '44px', /* touch target */
                 cursor: 'pointer',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '11px',
                 letterSpacing: '2px',
                 textTransform: 'uppercase',
                 color: activeTab === tab.id ? 'var(--ember-glow)' : 'var(--bone)',
-                opacity: activeTab === tab.id ? 1 : 0.55,
+                opacity: activeTab === tab.id ? 1 : 0.7, /* up from 0.55 — bone @ 0.55 = 4.4:1, fails AA */
                 transition: 'color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease',
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
               }}
-              onMouseEnter={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.9' } }}
-              onMouseLeave={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.55' } }}
+              onMouseEnter={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.95' } }}
+              onMouseLeave={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.7' } }}
             >
               {tab.label}
             </button>
@@ -276,9 +252,9 @@ export default function Menu() {
                 border: '1px solid var(--char)',
                 padding: '40px 32px',
               }}>
-                <div style={{
+                <div aria-hidden="true" style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '9px',
+                  fontSize: '10px',
                   letterSpacing: '3px',
                   color: 'var(--gold)',
                   textTransform: 'uppercase',

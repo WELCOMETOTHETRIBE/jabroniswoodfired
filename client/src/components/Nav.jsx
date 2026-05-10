@@ -1,6 +1,19 @@
 import { useState, useEffect } from 'react'
+import { PERSONA_CTA, PERSONAS } from './PersonaTabs'
 
-export default function Nav() {
+/**
+ * Nav — fixed top chrome.
+ *
+ * Simplified post-redesign:
+ *  - The four section anchors (Catering / Menu / Oven / Experience) are no
+ *    longer rendered on desktop because the persona-tab strip below the
+ *    Hero now does that job, and section visibility depends on persona.
+ *    They remain in the mobile hamburger as a "long-scroll fallback" for
+ *    users who arrived via a deep link or who genuinely want everything.
+ *  - The nav's primary CTA is persona-aware — its label and pre-select
+ *    intent change with the active persona.
+ */
+export default function Nav({ persona = 'catering', onSelectPersona }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -10,19 +23,36 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const navLinks = [
-    { label: 'Catering', href: '#packages' },
-    { label: 'Menu', href: '#menu' },
-    { label: 'Oven Commissions', href: '#oven' },
-    { label: 'The Experience', href: '#experience' },
+  // Long-scroll fallback links — only shown in the mobile hamburger menu
+  const fallbackLinks = [
+    { label: 'Catering', href: '#packages', persona: 'catering' },
+    { label: 'Menu', href: '#menu', persona: 'catering' },
+    { label: 'Ovens', href: '#oven', persona: 'ovens' },
+    { label: 'The Evening', href: '#experience', persona: 'evening' },
   ]
 
-  const handleNavClick = (e, href) => {
+  const handleAnchorClick = (e, link) => {
     e.preventDefault()
     setMenuOpen(false)
-    const el = document.querySelector(href)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
+    if (link.persona) onSelectPersona?.(link.persona)
+    // Two RAFs — let React commit the panel swap before scrolling, so we
+    // land on the freshly-mounted section node, not the old one.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.querySelector(link.href)?.scrollIntoView({ behavior: 'smooth' })
+    }))
   }
+
+  const handleCtaClick = (e) => {
+    e.preventDefault()
+    setMenuOpen(false)
+    const cta = PERSONA_CTA[persona] || PERSONA_CTA.catering
+    window.dispatchEvent(new CustomEvent('jabroni:preselect-inquiry', {
+      detail: { value: cta.inquiryType },
+    }))
+    document.querySelector('#booking')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const cta = PERSONA_CTA[persona] || PERSONA_CTA.catering
 
   return (
     <nav
@@ -39,6 +69,7 @@ export default function Nav() {
         borderBottom: scrolled ? '1px solid #3D3530' : '1px solid transparent',
         backdropFilter: scrolled ? 'blur(8px)' : 'none',
       }}
+      aria-label="Primary"
     >
       <div style={{
         maxWidth: '1280px',
@@ -59,10 +90,11 @@ export default function Nav() {
             alignItems: 'center',
             gap: '10px',
           }}
+          aria-label="Jabroni's Wood Fired — home"
         >
           <img
             src="/images/jabroni-logo-transparent.png"
-            alt="Jabroni's Wood Fired"
+            alt=""
             style={{
               height: '56px',
               width: 'auto',
@@ -85,47 +117,24 @@ export default function Nav() {
           </span>
         </a>
 
-        {/* Desktop Links */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }} className="desktop-nav">
-          {navLinks.map(link => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
-                color: 'var(--bone)',
-                textDecoration: 'none',
-                transition: 'color 0.2s ease',
-                padding: '4px 0',
-                borderBottom: '1px solid transparent',
-              }}
-              onMouseEnter={e => {
-                e.target.style.color = 'var(--ember-glow)'
-                e.target.style.borderBottomColor = 'var(--ember)'
-              }}
-              onMouseLeave={e => {
-                e.target.style.color = 'var(--bone)'
-                e.target.style.borderBottomColor = 'transparent'
-              }}
-            >
-              {link.label}
-            </a>
-          ))}
+        {/* Desktop right side — single persona-aware CTA. Locked at
+            14px / weight 700 so cream-on-ember (4.07:1) clears WCAG
+            large-text 3:1. */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }} className="desktop-nav">
           <a
             href="#booking"
-            onClick={(e) => handleNavClick(e, '#booking')}
+            onClick={handleCtaClick}
             className="btn btn-primary"
-            style={{ fontSize: '11px', padding: '10px 20px', letterSpacing: '2px' }}
+            style={{ fontSize: '14px', fontWeight: 700, padding: '12px 22px', letterSpacing: '2px', minHeight: '44px' }}
           >
-            Book the Fire
+            {cta.label}
           </a>
         </div>
 
-        {/* Mobile hamburger */}
+        {/* Mobile hamburger. 44×44 hit target — verifier flagged 40×29
+            previously. The visual stack of three lines stays the same;
+            we just give the button enough padding to be a real touch
+            target. */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="mobile-menu-btn"
@@ -133,12 +142,17 @@ export default function Nav() {
             background: 'none',
             border: 'none',
             cursor: 'pointer',
-            padding: '8px',
+            padding: '12px',
+            minHeight: '44px',
+            minWidth: '44px',
             display: 'none',
             flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
             gap: '5px',
           }}
-          aria-label="Menu"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
         >
           {[0, 1, 2].map(i => (
             <span key={i} style={{
@@ -158,40 +172,105 @@ export default function Nav() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — hosts persona switcher + long-scroll fallback links */}
       {menuOpen && (
         <div style={{
           background: 'rgba(15, 13, 11, 0.98)',
           borderTop: '1px solid var(--char)',
-          padding: '24px 32px 32px',
+          padding: '20px 32px 24px',
         }}>
-          {navLinks.map(link => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              style={{
-                display: 'block',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '13px',
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
-                color: 'var(--bone)',
-                textDecoration: 'none',
-                padding: '14px 0',
-                borderBottom: '1px solid var(--ash)',
-              }}
-            >
-              {link.label}
-            </a>
-          ))}
+          {/* Persona switcher (mobile only — the sticky strip handles tablet+) */}
+          <div style={{ marginBottom: '16px' }}>
+            <span style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '9px',
+              letterSpacing: '2px',
+              color: 'var(--gold)',
+              textTransform: 'uppercase',
+              display: 'block',
+              marginBottom: '10px',
+            }}>
+              Choose your path
+            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              {PERSONAS.map(p => (
+                <button
+                  key={p.id}
+                  onClick={() => { onSelectPersona?.(p.id); setMenuOpen(false) }}
+                  style={{
+                    background: persona === p.id ? 'rgba(201, 75, 26, 0.12)' : 'transparent',
+                    border: 'none',
+                    borderLeft: persona === p.id ? '2px solid var(--ember)' : '2px solid transparent',
+                    color: persona === p.id ? 'var(--ember-glow)' : 'var(--bone)',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '12px',
+                    letterSpacing: '2px',
+                    textTransform: 'uppercase',
+                    textAlign: 'left',
+                    padding: '14px 14px',
+                    minHeight: '44px', /* touch target */
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: '10px',
+                  }}
+                >
+                  <span>{p.label}</span>
+                  <span style={{ fontSize: '10px', opacity: 0.85, color: 'var(--gold)' }}>{p.status}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Long-scroll fallback section anchors */}
+          <div style={{
+            paddingTop: '12px',
+            borderTop: '1px solid var(--ash)',
+          }}>
+            <span style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '9px',
+              letterSpacing: '2px',
+              color: 'var(--muted)',
+              textTransform: 'uppercase',
+              display: 'block',
+              marginBottom: '8px',
+            }}>
+              Jump to section
+            </span>
+            {fallbackLinks.map(link => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleAnchorClick(e, link)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '12px',
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  color: 'var(--bone)',
+                  opacity: 0.65,
+                  textDecoration: 'none',
+                  padding: '14px 0',
+                  minHeight: '44px', /* touch target — anchor's hit area covers full row */
+                  borderBottom: '1px solid var(--ash)',
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+
           <a
             href="#booking"
-            onClick={(e) => handleNavClick(e, '#booking')}
+            onClick={handleCtaClick}
             className="btn btn-primary"
-            style={{ marginTop: '24px', display: 'block', textAlign: 'center', fontSize: '12px' }}
+            style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', fontSize: '14px', fontWeight: 700, minHeight: '48px' }}
           >
-            Book the Fire
+            {cta.label}
           </a>
         </div>
       )}

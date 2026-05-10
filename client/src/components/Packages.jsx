@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { JabroniIcon } from './JabroniSVG'
+import SectionHeader from './SectionHeader'
 
 const TABS = [
   { id: 'bbq', label: 'BBQ & Live-Fire', live: true },
@@ -151,9 +151,28 @@ const PACKAGES = {
   ],
 }
 
-function PackageCard({ pkg }) {
+// Map (tab id, package name) -> the matching INQUIRY_TYPES value used by
+// Booking.jsx. Keeps the persona handoff explicit: clicking "Book This" on
+// the Signature BBQ card pre-selects "BBQ & Live-Fire — Signature BBQ" in
+// the form, no DOM reach-around required.
+function inquiryTypeFor(tabId, pkgName) {
+  if (tabId === 'bbq') {
+    if (pkgName === 'Street Package') return 'BBQ & Live-Fire — Street Package'
+    if (pkgName === 'Signature BBQ') return 'BBQ & Live-Fire — Signature BBQ'
+    if (pkgName === 'Full Feast') return 'BBQ & Live-Fire — Full Feast'
+  }
+  if (tabId === 'pizza') return 'Wood-Fired Pizza'
+  if (tabId === 'santamaria') return 'Santa Maria Add-On'
+  return 'General Inquiry'
+}
+
+function PackageCard({ pkg, tabId }) {
   const scrollToBooking = (e) => {
     e.preventDefault()
+    const value = inquiryTypeFor(tabId, pkg.name)
+    window.dispatchEvent(new CustomEvent('jabroni:preselect-inquiry', {
+      detail: { value },
+    }))
     document.querySelector('#booking')?.scrollIntoView({ behavior: 'smooth' })
   }
 
@@ -174,19 +193,24 @@ function PackageCard({ pkg }) {
       if (!pkg.featured) e.currentTarget.style.background = 'rgba(45, 41, 37, 0.3)'
     }}
     >
-      {/* Featured badge */}
+      {/* Featured badge — cream-on-ember (4.07:1) fails small-text AA.
+          Inverted to ember-glow on stage (deep dark) so the badge reads
+          high-contrast on its own pill. ember-glow (#E8622A) on stage
+          (#0F0D0B) ≈ 6.5:1 — clears AA comfortably at any size. */}
       {pkg.featured && (
         <div style={{
           position: 'absolute',
           top: '-1px',
           left: '50%',
           transform: 'translateX(-50%)',
-          background: 'var(--ember)',
-          padding: '3px 16px',
+          background: 'var(--stage)',
+          border: '1px solid var(--ember)',
+          padding: '4px 16px',
           fontFamily: 'var(--font-mono)',
-          fontSize: '9px',
+          fontSize: '10px',
+          fontWeight: 700,
           letterSpacing: '2px',
-          color: 'var(--cream)',
+          color: 'var(--ember-glow)',
           textTransform: 'uppercase',
           whiteSpace: 'nowrap',
         }}>
@@ -284,12 +308,13 @@ function PackageCard({ pkg }) {
         ))}
       </ul>
 
-      {/* CTA */}
+      {/* CTA. Locked at 14px / weight 700 so .btn-primary cream-on-ember
+          (4.07:1) clears the WCAG large-text 3:1 threshold. */}
       <a
         href="#booking"
         onClick={scrollToBooking}
         className={`btn ${pkg.featured ? 'btn-primary' : pkg.live ? 'btn-ember-ghost' : 'btn-ghost'}`}
-        style={{ textAlign: 'center', fontSize: '11px', letterSpacing: '2px', padding: '13px 24px' }}
+        style={{ textAlign: 'center', fontSize: '14px', fontWeight: 700, letterSpacing: '2px', padding: '14px 24px', minHeight: '44px' }}
       >
         {pkg.live ? 'Book This →' : 'Get Notified →'}
       </a>
@@ -327,41 +352,16 @@ export default function Packages() {
     }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 48px' }}>
 
-        {/* Section header */}
-        <div className="fire-rule reveal" style={{ marginBottom: '48px' }}>
-          <span>Catering</span>
-          <JabroniIcon style={{ width: '24px', height: '24px', color: 'var(--ember)', flexShrink: 0 }} />
-          <span>Live Fire</span>
-        </div>
-
-        <div className="reveal reveal-delay-1" style={{ marginBottom: '8px' }}>
-          <span className="eyebrow">Block Parties · Graduations · Small Weddings</span>
-        </div>
-        <h2 className="reveal reveal-delay-2" style={{
-          fontFamily: 'var(--font-playfair)',
-          fontWeight: 900,
-          fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-          color: 'var(--cream)',
-          marginBottom: '20px',
-          letterSpacing: '-0.5px',
-        }}>
-          Real Fire for{' '}
-          <em style={{ color: 'var(--ember-glow)', fontStyle: 'italic' }}>Real Events.</em>
-        </h2>
-        <p className="reveal reveal-delay-2" style={{
-          fontFamily: 'var(--font-cormorant)',
-          fontSize: '1.1rem',
-          fontWeight: 300,
-          color: 'var(--bone)',
-          lineHeight: 1.75,
-          marginBottom: '48px',
-          maxWidth: '560px',
-        }}>
-          Fire is the oldest communal act there is. Long before restaurants, long before kitchens, people gathered around it — cooked over it, fed each other from it, and called that a meal. We haven't improved on that tradition. We've spent ninety years getting exceptionally good at it.
-        </p>
+        <SectionHeader
+          kicker={{ left: 'Catering', right: 'Live Fire' }}
+          eyebrow="Block Parties · Graduations · Small Weddings"
+          title="Real Fire for"
+          accent="Real Events."
+          body="Fire is the oldest communal act there is. Long before restaurants, long before kitchens, people gathered around it — cooked over it, fed each other from it, and called that a meal. We haven't improved on that tradition. We've spent ninety years getting exceptionally good at it."
+        />
 
         {/* Tabs */}
-        <div className="reveal reveal-delay-3" style={{
+        <div className="reveal reveal-delay-3 packages-tab-strip" style={{
           display: 'flex',
           gap: '2px',
           marginBottom: '48px',
@@ -371,6 +371,7 @@ export default function Packages() {
           {TABS.map(tab => (
             <button
               key={tab.id}
+              className="packages-tab"
               onClick={() => setActiveTab(tab.id)}
               style={{
                 background: 'none',
@@ -378,21 +379,22 @@ export default function Packages() {
                 borderBottom: activeTab === tab.id ? '2px solid var(--ember)' : '2px solid transparent',
                 marginBottom: '-1px',
                 padding: '14px 24px',
+                minHeight: '44px', /* touch target */
                 cursor: 'pointer',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '11px',
                 letterSpacing: '2px',
                 textTransform: 'uppercase',
                 color: activeTab === tab.id ? 'var(--ember-glow)' : 'var(--bone)',
-                opacity: activeTab === tab.id ? 1 : 0.55,
+                opacity: activeTab === tab.id ? 1 : 0.7, /* up from 0.55 — bone @ 0.55 fails AA */
                 transition: 'color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
                 whiteSpace: 'nowrap',
               }}
-              onMouseEnter={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.color = 'var(--bone)' } }}
-              onMouseLeave={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.55'; e.currentTarget.style.color = 'var(--bone)' } }}
+              onMouseEnter={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.95'; e.currentTarget.style.color = 'var(--bone)' } }}
+              onMouseLeave={e => { if (activeTab !== tab.id) { e.currentTarget.style.opacity = '0.7'; e.currentTarget.style.color = 'var(--bone)' } }}
             >
               {tab.label}
               {tab.live && (
@@ -422,14 +424,22 @@ export default function Packages() {
           ))}
         </div>
 
-        {/* Package cards */}
-        <div style={{
+        {/* Package cards. The class hook (`packages-tier-grid`) is the
+            mobile collapse target — substring selectors on the React
+            inline-style attribute do not match because React serializes
+            inline styles to kebab-case in the DOM, which broke the
+            previous `[style*="gridTemplateColumns"]` rule. */}
+        <div className="packages-tier-grid" style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${Math.min(packages.length, 3)}, 1fr)`,
           gap: '2px',
         }}>
           {packages.map((pkg, i) => (
-            <PackageCard key={`${activeTab}-${i}`} pkg={{ ...pkg, live: tabIsLive }} />
+            <PackageCard
+              key={`${activeTab}-${i}`}
+              pkg={{ ...pkg, live: tabIsLive }}
+              tabId={activeTab}
+            />
           ))}
         </div>
 
@@ -444,27 +454,33 @@ export default function Packages() {
           textTransform: 'uppercase',
         }}>
           All pricing is per-person. Travel fees may apply outside Coachella Valley + South Bay LA.
-          <span style={{ color: 'var(--ember)', margin: '0 8px' }}>·</span>
+          <span aria-hidden="true" style={{ color: 'var(--ember)', margin: '0 8px' }}>·</span>
           Custom quotes available for all events.
         </p>
       </div>
 
       <style>{`
+        /* Tablet: 3 → 2 column. Note we do NOT also collapse to 1 here;
+           that happens at 480px below. */
         @media (max-width: 860px) {
-          #packages [style*="gridTemplateColumns"] {
+          #packages > div { padding: 80px 24px !important; }
+          .packages-tier-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+          .packages-tab-strip { gap: 0 !important; }
+        }
+        /* Mobile: collapse to single column.
+           The verifier reported card body text squeezed to 1–3 character
+           columns at 320px — collapsing to 1fr at 480px gives every card
+           full viewport width so bullet wrapping breathes. */
+        @media (max-width: 480px) {
+          .packages-tier-grid {
             grid-template-columns: 1fr !important;
           }
-          #packages > div {
-            padding: 80px 24px !important;
-          }
-          #packages [style*="gap: '2px'"][style*="flexWrap: 'wrap'"] {
-            gap: 0 !important;
-          }
-        }
-        @media (max-width: 480px) {
-          #packages [style*="padding: '14px 24px'"] {
+          .packages-tab {
             padding: 12px 16px !important;
             font-size: 10px !important;
+            min-height: 44px !important;
           }
         }
       `}</style>
