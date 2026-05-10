@@ -15,6 +15,65 @@ const INQUIRY_TYPES = [
   { value: 'General Inquiry', label: 'General Inquiry' },
 ]
 
+// LP7 — Persona-aware field visibility.
+// The brief's success criterion is "≤ 5 visible fields on first paint when a
+// persona is selected". The map below classifies each inquiry type into a
+// "bucket" whose form shape is appropriate for the buyer's intent. For
+// example, an oven commissioner doesn't need "Guest Count" framed as event
+// headcount, and an "Express Interest" lead for the still-aspirational
+// Evening concept only needs name + email + message to capture a notify-me.
+//
+// `getFieldSet(type, manualOverride)` returns a pure function of inputs:
+// - `manualOverride=true` → user clicked "Change inquiry type" → show all
+//   fields including the select itself, regardless of `type`.
+// - Otherwise → bucket-specific reduced field set with the select hidden.
+const TYPE_BUCKET = {
+  '': 'general',
+  'BBQ & Live-Fire — Street Package': 'catering',
+  'BBQ & Live-Fire — Signature BBQ': 'catering',
+  'BBQ & Live-Fire — Full Feast': 'catering',
+  'Wood-Fired Pizza': 'catering',
+  'Santa Maria Add-On': 'catering',
+  "A Jabroni's Evening": 'evening',
+  'Oven Commission': 'oven',
+  'Resort Partnership': 'oven',
+  'General Inquiry': 'general',
+}
+
+const ALL_FIELDS = {
+  name: true,
+  email: true,
+  phone: true,
+  type: true,
+  guests: true,
+  dateLocation: true,
+  message: true,
+}
+
+function getFieldSet(type, manualOverride) {
+  if (manualOverride) return { ...ALL_FIELDS }
+  const bucket = TYPE_BUCKET[type] || 'general'
+  switch (bucket) {
+    case 'catering':
+      // Hosts: contact + event details + message. Inquiry type is known
+      // (pre-selected from the persona CTA) so the select is hidden.
+      return { name: true, email: true, phone: true, type: false, guests: true, dateLocation: true, message: true }
+    case 'oven':
+      // Oven commissioners: contact + message. Event date + guest count are
+      // irrelevant to a 10–28 wk oven build.
+      return { name: true, email: true, phone: true, type: false, guests: false, dateLocation: false, message: true }
+    case 'evening':
+      // Express-interest lead capture for the still-aspirational concept.
+      // Minimum to reach back out: name + email + message.
+      return { name: true, email: true, phone: false, type: false, guests: false, dateLocation: false, message: true }
+    case 'general':
+    default:
+      // No persona pre-selected (or user explicitly chose General Inquiry):
+      // full backwards-compatible behavior.
+      return { ...ALL_FIELDS }
+  }
+}
+
 const INITIAL_FORM = {
   firstName: '',
   lastName: '',
@@ -31,8 +90,15 @@ export default function Booking({ initialInquiryType = '' }) {
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | loading | success | error
   const [errorMessage, setErrorMessage] = useState('')
+  // LP7 — when true, the user has clicked "Change inquiry type" to escape
+  // the persona-reduced form back to the full 8-field experience. Reset to
+  // false on any incoming `jabroni:preselect-inquiry` event so a fresh
+  // persona pick re-applies the appropriate reduced field set.
+  const [manualOverride, setManualOverride] = useState(false)
   const sectionRef = useRef(null)
   const selectRef = useRef(null)
+
+  const visible = getFieldSet(form.type, manualOverride)
 
   useEffect(() => {
     if (!sectionRef.current) return
@@ -63,6 +129,9 @@ export default function Booking({ initialInquiryType = '' }) {
       if (typeof next !== 'string') return
       setForm(prev => prev.type === next ? prev : { ...prev, type: next })
       if (errors.type) setErrors(prev => ({ ...prev, type: '' }))
+      // LP7 — fresh persona pre-select cancels any prior manual override so
+      // the new persona's reduced field set applies on landing.
+      setManualOverride(false)
     }
     window.addEventListener('jabroni:preselect-inquiry', handler)
     return () => window.removeEventListener('jabroni:preselect-inquiry', handler)
@@ -92,6 +161,12 @@ export default function Booking({ initialInquiryType = '' }) {
     const { name, value } = e.target
     setForm(prev => ({ ...prev, [name]: value }))
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
+    // LP7 — When the user picks a new inquiry type from the (revealed)
+    // select, drop the manual override so the bucket's reduced field set
+    // re-applies. This makes the field set a pure function of the current
+    // type (per brief item 5). The "Change inquiry type" link will
+    // reappear next to the chosen type as the recovery path.
+    if (name === 'type' && manualOverride) setManualOverride(false)
   }
 
   const handleSubmit = async (e) => {
@@ -105,11 +180,29 @@ export default function Booking({ initialInquiryType = '' }) {
     setStatus('loading')
     setErrorMessage('')
 
+    // LP7 — Submit only the fields visible in the current persona-aware
+    // form shape. If a user pre-filled, say, "Guest Count" and then
+    // switched persona to Oven (which hides that field), we must not send
+    // the stale value. firstName/lastName/email/type are always required
+    // and always present. The phone/guests/dateLocation/message keys are
+    // dropped from the payload when their fields are hidden — backend
+    // accepts the schema with these as optionals.
+    const payload = {
+      firstName: form.firstName,
+      lastName: form.lastName,
+      email: form.email,
+      type: form.type,
+    }
+    if (visible.phone) payload.phone = form.phone
+    if (visible.guests) payload.guests = form.guests
+    if (visible.dateLocation) payload.dateLocation = form.dateLocation
+    if (visible.message) payload.message = form.message
+
     try {
       const res = await fetch('/api/inquiry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       })
       const data = await res.json()
       if (res.ok && data.success) {
@@ -129,6 +222,7 @@ export default function Booking({ initialInquiryType = '' }) {
     setErrors({})
     setStatus('idle')
     setErrorMessage('')
+    setManualOverride(false)
   }
 
   return (
@@ -270,6 +364,72 @@ export default function Booking({ initialInquiryType = '' }) {
               <SuccessState onReset={handleReset} />
             ) : (
               <form onSubmit={handleSubmit} noValidate>
+                {/* LP7 — Persona-aware preamble.
+                    When the inquiry type is pre-selected (or manually picked
+                    from the select to anything other than "General Inquiry"),
+                    the select is hidden and replaced with a single line that
+                    confirms what the user is inquiring about plus a "Change
+                    inquiry type" affordance to escape the reduced form. */}
+                {!visible.type && form.type && (
+                  <div
+                    className="reveal"
+                    style={{
+                      marginBottom: '20px',
+                      padding: '14px 16px',
+                      background: 'rgba(201, 75, 26, 0.06)',
+                      border: '1px solid var(--char)',
+                      borderLeft: '2px solid var(--ember)',
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '12px',
+                    }}
+                  >
+                    <div style={{ minWidth: 0 }}>
+                      <span style={{
+                        display: 'block',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '10px',
+                        letterSpacing: '2px',
+                        color: 'var(--gold)',
+                        textTransform: 'uppercase',
+                        marginBottom: '4px',
+                      }}>
+                        Inquiry Type
+                      </span>
+                      <span style={{
+                        fontFamily: 'var(--font-cormorant)',
+                        fontSize: '1.05rem',
+                        fontStyle: 'italic',
+                        color: 'var(--cream)',
+                      }}>
+                        {form.type}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setManualOverride(true)}
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '11px',
+                        letterSpacing: '1.5px',
+                        color: 'var(--ember-glow)',
+                        background: 'transparent',
+                        border: 'none',
+                        textTransform: 'uppercase',
+                        cursor: 'pointer',
+                        padding: '8px 0',
+                        textDecoration: 'underline',
+                        textUnderlineOffset: '3px',
+                      }}
+                      aria-label="Change inquiry type"
+                    >
+                      Change inquiry type{' '}↻
+                    </button>
+                  </div>
+                )}
+
                 {/* Name row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                   <FormField
@@ -292,8 +452,10 @@ export default function Booking({ initialInquiryType = '' }) {
                   />
                 </div>
 
-                {/* Email + Phone row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                {/* Email + Phone row.
+                    Phone is hidden in the Evening (express-interest) bucket.
+                    When phone is hidden, email occupies the full row. */}
+                <div className={`grid grid-cols-1 ${visible.phone ? 'md:grid-cols-2' : ''} gap-3 mb-3`}>
                   <FormField
                     label="Email"
                     name="email"
@@ -304,73 +466,92 @@ export default function Booking({ initialInquiryType = '' }) {
                     placeholder="your@email.com"
                     required
                   />
-                  <FormField
-                    label="Phone"
-                    name="phone"
-                    type="tel"
-                    value={form.phone}
-                    onChange={handleChange}
-                    placeholder="Optional"
-                  />
+                  {visible.phone && (
+                    <FormField
+                      label="Phone"
+                      name="phone"
+                      type="tel"
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="Optional"
+                    />
+                  )}
                 </div>
 
-                {/* Inquiry type */}
-                <div style={{ marginBottom: '12px' }}>
-                  <label htmlFor="inquiry-type" style={labelStyle}>
-                    Inquiry Type <span style={{ color: 'var(--ember)' }} aria-hidden="true">*</span>
-                  </label>
-                  <select
-                    id="inquiry-type"
-                    name="type"
-                    value={form.type}
-                    onChange={handleChange}
-                    className={`form-input${errors.type ? ' error' : ''}`}
-                    ref={selectRef}
-                    aria-label="Inquiry type"
-                    aria-required="true"
-                    aria-invalid={errors.type ? 'true' : 'false'}
+                {/* Inquiry type — visible in General bucket, OR after the
+                    user clicks "Change inquiry type" to escape a pre-selected
+                    persona-reduced form. */}
+                {visible.type && (
+                  <div style={{ marginBottom: '12px' }}>
+                    <label htmlFor="inquiry-type" style={labelStyle}>
+                      Inquiry Type <span style={{ color: 'var(--ember)' }} aria-hidden="true">*</span>
+                    </label>
+                    <select
+                      id="inquiry-type"
+                      name="type"
+                      value={form.type}
+                      onChange={handleChange}
+                      className={`form-input${errors.type ? ' error' : ''}`}
+                      ref={selectRef}
+                      aria-label="Inquiry type"
+                      aria-required="true"
+                      aria-invalid={errors.type ? 'true' : 'false'}
+                    >
+                      {INQUIRY_TYPES.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                    {errors.type && <span style={errorStyle}>{errors.type}</span>}
+                  </div>
+                )}
+
+                {/* Guest count + Date/Location.
+                    Hidden for Oven and Evening buckets (irrelevant). When
+                    only one of the two is shown the row drops to a single
+                    full-width column on every viewport. */}
+                {(visible.guests || visible.dateLocation) && (
+                  <div
+                    className={`grid grid-cols-1 ${visible.guests && visible.dateLocation ? 'md:grid-cols-[1fr_1.5fr]' : ''} gap-3 mb-3`}
                   >
-                    {INQUIRY_TYPES.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
-                  {errors.type && <span style={errorStyle}>{errors.type}</span>}
-                </div>
-
-                {/* Guest count + Date/Location */}
-                <div className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr] gap-3 mb-3">
-                  <FormField
-                    label="Guest Count"
-                    name="guests"
-                    type="number"
-                    value={form.guests}
-                    onChange={handleChange}
-                    placeholder="Approx. count"
-                    min="1"
-                  />
-                  <FormField
-                    label="Event Date & Location"
-                    name="dateLocation"
-                    value={form.dateLocation}
-                    onChange={handleChange}
-                    placeholder="Date + city or venue"
-                  />
-                </div>
+                    {visible.guests && (
+                      <FormField
+                        label="Guest Count"
+                        name="guests"
+                        type="number"
+                        value={form.guests}
+                        onChange={handleChange}
+                        placeholder="Approx. count"
+                        min="1"
+                      />
+                    )}
+                    {visible.dateLocation && (
+                      <FormField
+                        label="Event Date & Location"
+                        name="dateLocation"
+                        value={form.dateLocation}
+                        onChange={handleChange}
+                        placeholder="Date + city or venue"
+                      />
+                    )}
+                  </div>
+                )}
 
                 {/* Message */}
-                <div style={{ marginBottom: '24px' }}>
-                  <label htmlFor="booking-message" style={labelStyle}>Message</label>
-                  <textarea
-                    id="booking-message"
-                    name="message"
-                    value={form.message}
-                    onChange={handleChange}
-                    placeholder="Tell us about the event. The fire is already lit."
-                    rows={5}
-                    className="form-input"
-                    style={{ resize: 'vertical', minHeight: '120px', lineHeight: 1.6 }}
-                  />
-                </div>
+                {visible.message && (
+                  <div style={{ marginBottom: '24px' }}>
+                    <label htmlFor="booking-message" style={labelStyle}>Message</label>
+                    <textarea
+                      id="booking-message"
+                      name="message"
+                      value={form.message}
+                      onChange={handleChange}
+                      placeholder="Tell us about the event. The fire is already lit."
+                      rows={5}
+                      className="form-input"
+                      style={{ resize: 'vertical', minHeight: '120px', lineHeight: 1.6 }}
+                    />
+                  </div>
+                )}
 
                 {/* Error message */}
                 {status === 'error' && (
